@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Stock Transfer Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-50">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Stock Transfer Report</li>
+    </ol>
+</div>
+<!-- Page Header Close -->
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">Stock Transfer Report</div>
+                    </div>
+                    <div class="mt">
+                        <form method="GET">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <label for="date_range">Date Range:</label>
+                                        <input type="text" class="form-control" id="date_range" name="date_range" value="{{ filter_data.date_range }}" placeholder="Select Date Range">
+                                    </div>
+                                    <div class="col">
+                                        <label for="q">Search:</label>
+                                        <input type="text" class="form-control" name="q" value="{{ filter_data.q|default_if_none:'' }}" placeholder="Search by Product, Van, or Salesman">
+                                    </div>
+                                    <div class="col d-flex align-items-end justify-content-start mt-4">
+                                        <input type="submit" class="btn btn-primary btn-sm mx-1" value="Apply Filter">
+                                        <a href="{% url 'stock_transfer_report' %}" class="btn btn-secondary btn-sm mx-1">Reset Filter</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-body" style="overflow: auto;">
+                        <table class="table table-bordered text-nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Sl.No</th>
+                                    <th scope="col" class="text-center">Created Date</th>
+                                    <th scope="col" class="text-left">Salesman</th>
+                                    <th scope="col" class="text-left">From Van</th>
+                                    <th scope="col" class="text-left">To Van</th>
+                                    <th scope="col" class="text-left">Product</th>
+                                    <th scope="col" class="text-right">Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% load el_pagination_tags %}
+                                {% paginate 20 instances %}
+                                {% for instance in instances %}
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td class="text-center">{{ instance.stock_movement.created_date }}</td>
+                                    <td class="text-left">{{ instance.stock_movement.salesman.username }}</td>
+                                    <td class="text-left">{{ instance.stock_movement.from_van.van_make }}</td>
+                                    <td class="text-left">{{ instance.stock_movement.to_van.van_make }}</td>
+                                    <td class="text-left">{{ instance.product.product_name }}</td>
+                                    <td class="text-right">{{ instance.quantity }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No Stock Transfers found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% get_pages %}
+                    <div class="clearfix"></div>
+                    <div class="row pagi my-3">
+                        <div class="col-sm-6 col-xs-6 tot my-pagination">
+                            <div class="m-t-10 text-start">
+                                Showing {{ title }}
+                                <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xs-6 text-end pagination-btn-div">{% show_pages %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Date Range Picker Script if not included in base -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<script>
+$(function() {
+    $('#date_range').daterangepicker({
+        opens: 'left',
+        autoUpdateInput: false,
+        locale: {
+            cancelLabel: 'Clear',
+            format: 'MM/DD/YYYY'
+        }
+    });
+
+    $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    });
+
+    $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+});
+</script>
+
+{% endblock %}

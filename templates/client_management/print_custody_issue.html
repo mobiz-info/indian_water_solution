@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Custody Issue</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                margin: 0;
+                padding: 10px;
+            }
+            .card {
+                border: none !important;
+                box-shadow: none;
+            }
+            .table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .table-bordered th,
+            .table-bordered td {
+                border: 1px solid #000;
+                font-size: 13px;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+
+            <div class="card custom-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        Custody Issue Report
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>From:</strong> {{ start_date }} &nbsp;&nbsp;
+                        <strong>To:</strong> {{ end_date }}
+                    </div>
+
+                    {% if selected_route %}
+                        <h5>Route: {{ selected_route.route_name }}</h5>
+                    {% endif %}
+
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th rowspan="2">Sl No</th>
+                            <th rowspan="2">Customer / ID / Mobile</th>
+                            <th rowspan="2">Route</th>
+                            <th colspan="2">5 Gallon</th>
+                            <th colspan="2">Dispenser</th>
+                            <th colspan="2">Cooler</th>
+                        </tr>
+                        <tr>
+                            <th>Deposit</th>
+                            <th>Non-Deposit</th>
+                            <th>Deposit</th>
+                            <th>Non-Deposit</th>
+                            <th>Deposit</th>
+                            <th>Non-Deposit</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for customer, counts in customer_product_counts.items %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ customer.customer_name }}/{{ customer.custom_id }}/{{ customer.mobile_no }}</td>
+                            <td>{{ customer.routes }}</td>
+                            <td>{{ counts.5_gallon_deposit }}</td>
+                            <td>{{ counts.5_gallon_non_deposit }}</td>
+                            <td>{{ counts.dispenser_deposit }}</td>
+                            <td>{{ counts.dispenser_non_deposit }}</td>
+                            <td>{{ counts.cooler_deposit }}</td>
+                            <td>{{ counts.cooler_non_deposit }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center">No data available</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        window.print();
+    }
+</script>
+</body>
+</html>

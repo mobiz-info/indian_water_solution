@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %} Monthly Outstanding Report {% endblock %}
+{% block content %}
+{% load van_template_tags %}
+{% load sales_templatetags %}
+
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Monthly Outstanding Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Sales Management </a></li>
+        <li class="breadcrumb-item active" aria-current="page">Monthly Outstanding Report</li>
+    </ol>
+</div>
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <!-- Start:: row-2 -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Monthly Outstanding Report
+                        </div>
+                    </div>
+
+
+                    <div class="mt">
+                        <form method="GET" action="{% url 'monthly_outstanding_report' %}">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-2">
+                                        <label for="from_date">From Date:</label>
+                                        <input type="date" class="form-control" id="from_date" name="from_date" value="{{ filter_data.from_date }}">
+                                    </div>
+                                    <div class="col-2">
+                                        <label for="to_date">To Date:</label>
+                                        <input type="date" class="form-control" id="to_date" name="to_date" value="{{ filter_data.to_date }}">
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="route_name">Routes :</label>
+                                        <select name="route_name" class="form-select">
+                                            <option value="">Select Route</option>
+                                            {% for route in routes_instances %}
+                                                <option value="{{ route.route_name }}"  {% if route.route_name == filter_data.route_name %}selected{% endif %}>{{ route.route_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                     <div class="col-3">
+                                        <label for="salesman_id">Salesman :</label>
+                                        <select name="salesman_id" class="form-select">
+                                            <option value="">Select Salesman</option>
+                                            {% for salesman in salesmen_instances %}
+                                                <option value="{{ salesman.pk }}"  {% if salesman.pk|stringformat:"s" == filter_data.salesman_id %}selected{% endif %}>{{ salesman.get_fullname|title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col d-flex align-items-end justify-content-end">
+                                        <input type="submit" class="btn btn-primary btn-sm mx-1" value="Apply Filter">
+                                        {% if data_filter %}
+                                        <a href="{% url 'monthly_outstanding_report' %}" class="btn btn-secondary btn-sm mx-1">Reset</a>
+                                        <button type="button" class="btn btn-outline-success btn-sm mx-1" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+                                        <!-- Excel Export -->
+                                        <a href="{{ request.get_full_path }}&export=excel" class="btn btn-outline-info btn-sm mx-1"><i class="fas fa-file-excel"></i> Excel</a>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% if data_filter %}
+                    <div id="print-area">
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-12 text-center">
+                                    <h5 class="fw-bold">Outstanding Details of Salesman: {{ salesman_name|title }}</h5>
+                                    <p class="fw-bold">From: {{ from_date|date:"d-m-Y" }} To: {{ to_date|date:"d-m-Y" }}</p>
+                                </div>
+                            </div>
+                            
+                            <table class="table table-bordered text-center text-wrap w-100">
+                                <thead>
+                                    <tr class="fw-bold">
+                                        <th class="fw-bold" style="text-align:center;">SALES DATE</th>
+                                        <th class="fw-bold" style="text-align:center;">OPENING</th>
+                                        <th class="fw-bold" style="text-align:center;">CREDIT AMT</th>
+                                        <th class="fw-bold" style="text-align:center;">COLLECTION</th>
+                                        <th class="fw-bold" style="text-align:center;">CLOSING</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in daily_data %}
+                                    <tr>
+                                        <td>{{ row.date|date:"d-m-Y" }}</td>
+                                        <td>{{ row.opening }}</td>
+                                        <td>{{ row.credit }}</td>
+                                        <td>{{ row.collection }}</td>
+                                        <td>{{ row.closing }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5">No data found for the selected period.</td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    <tr class="fw-bold table-active" style="background-color: #f8f9fa;">
+                                        <td class="fw-bold">Total</td>
+                                        <td></td>
+                                        <td class="fw-bold">{{ total_credit }}</td>
+                                        <td class="fw-bold">{{ total_collection }}</td>
+                                        <td class="fw-bold">{{ total_closing }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="row mt-4">
+                                <div class="col-6">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Opening Outstanding :</td>
+                                            <td class="fw-bold text-end">{{ opening_outstanding }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Credit Collection :</td>
+                                            <td class="fw-bold text-end">{{ total_collection }}</td>
+                                        </tr>
+                                        <tr class="border-top border-dark">
+                                            <td class="fw-bold"><strong>Outstanding Due ( Last Month )</strong></td>
+                                            <td class="fw-bold text-end">
+                                                 <span class="outstanding-due-calc">{{ opening_outstanding }} - {{ total_collection }}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-6">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Credit Sales :</td>
+                                            <td class="fw-bold text-end">{{ total_credit }}</td>
+                                        </tr>
+                                        <tr class="border-top border-dark">
+                                            <td class="fw-bold"><strong>Closing Outstanding</strong></td>
+                                            <td class="fw-bold text-end">{{ total_closing }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Removed Acknowledgement and Signature sections as per request -->
+                        </div>
+                    </div>
+
+                    <!-- Script for simple calculation if not done in backend -->
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const opening = parseFloat("{{ opening_outstanding }}");
+                            const collection = parseFloat("{{ total_collection }}");
+                            
+                            const diff = opening - collection;
+                            const el = document.querySelector('.outstanding-due-calc');
+                            if(el) el.textContent = diff.toFixed(2);
+                        });
+                    </script>
+                    
+                    <style type="text/css" media="print">
+                        @page { 
+                            size: auto;
+                            margin: 5mm;
+                        } 
+                        html, body {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            height: auto !important;
+                        }
+                        body * {
+                            visibility: hidden;
+                        }
+                        #print-area, #print-area * {
+                            visibility: visible;
+                        }
+                        #print-area {
+                            position: fixed;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+                        #print-area .card-body {
+                            padding: 0 !important;
+                        }
+                        .table-bordered th, .table-bordered td {
+                            border: 1px solid black !important;
+                            padding: 4px !important; /* Reduce padding to save space */
+                            font-size: 12px !important; /* Slightly smaller font */
+                        }
+                        h5 {
+                            font-size: 16px !important;
+                            margin-bottom: 5px !important;
+                        }
+                        p {
+                            margin-bottom: 5px !important;
+                        }
+                    </style>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

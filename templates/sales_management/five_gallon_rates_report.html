@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %} 5 Gallon Supplied Rates Report {% endblock %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between">
+    <h4 class="fw-medium mb-0">5 Gallon Supplied Rates Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">5 Gallon Supplied Rates</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">5 Gallon Supplied Rates Report</div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="mt">
+                        <form method="GET" action="{% url 'five_gallon_rates_report' %}">
+                            <div class="card-body">
+                                <div class="row align-items-end g-2">
+                                    <div class="col-md-3">
+                                        <label for="from_date">From Date:</label>
+                                        <input type="date" class="form-control" id="from_date" name="from_date"
+                                               value="{{ filter_data.from_date }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="to_date">To Date:</label>
+                                        <input type="date" class="form-control" id="to_date" name="to_date"
+                                               value="{{ filter_data.to_date }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="route_name">Route:</label>
+                                        <select name="route_name" id="route_name" class="form-select select2" multiple="multiple">
+                                            <option value="all" {% if 'all' in filter_data.route_name %}selected{% endif %}>All Routes</option>
+                                            {% for route in routes_instances %}
+                                                <option value="{{ route.route_name }}"
+                                                    {% if route.route_name in filter_data.route_name %}selected{% endif %}>
+                                                    {{ route.route_name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col d-flex align-items-end justify-content-end gap-2">
+                                        <input type="submit" class="btn btn-primary btn-sm" value="Apply Filter">
+                                        {% if data_filter %}
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                                onclick="location.href='{% url 'five_gallon_rates_report' %}'">
+                                            Reset
+                                        </button>
+                                        
+                                        <div>
+                                            <a href="{% url 'five_gallon_rates_report_print' %}?from_date={{ filter_data.from_date }}&to_date={{ filter_data.to_date }}{% for r in filter_data.route_name %}&route_name={{ r|urlencode }}{% endfor %}" class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-print"></i> Print
+                                            </a>
+                                            <a href="{% url 'five_gallon_rates_report_excel' %}?from_date={{ filter_data.from_date }}&to_date={{ filter_data.to_date }}{% for r in filter_data.route_name %}&route_name={{ r|urlencode }}{% endfor %}" class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-file-excel"></i> Excel
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Results -->
+                    {% if data_filter %}
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <!-- <span class="badge bg-info-transparent text-info">
+                                Route: <strong>{{ filter_data.route_name }}</strong>
+                            </span>
+                            <span class="badge bg-primary-transparent text-primary ms-2">
+                                {{ filter_data.from_date }} &mdash; {{ filter_data.to_date }}
+                            </span> -->
+                        </div>
+
+                        {% if rates_data %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-wrap" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-bold" colspan="5">5 Gallon Supplied Rates</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:center;">Rate (AED)</th>
+                                        <th style="text-align:center;">Credit</th>
+                                        <th style="text-align:center;">Cash</th>
+                                        <th style="text-align:center;">Coupon</th>
+                                        <th style="text-align:center;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in rates_data %}
+                                    <tr>
+                                        <td style="text-align:center;">{{ row.rate }}</td>
+                                        <td style="text-align:center;">{{ row.credit }}</td>
+                                        <td style="text-align:center;">{{ row.cash }}</td>
+                                        <td style="text-align:center;">{{ row.coupon }}</td>
+                                        <td style="text-align:center;"><strong>{{ row.total }}</strong></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td style="text-align: right;">Total:</td>
+                                        <td style="text-align:center;">{{ total_credit }}</td>
+                                        <td style="text-align:center;">{{ total_cash }}</td>
+                                        <td style="text-align:center;">{{ total_coupon }}</td>
+                                        <td style="text-align:center;"><strong>{{ grand_total }}</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            No 5 Gallon supply data found for the selected route and date range.
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block static %}
+<script>
+    $(document).ready(function() {
+        var $select = $('#route_name');
+        
+        $select.select2({
+            placeholder: "-- Select Routes --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // When "All Routes" is selected, select every individual route instead
+        $select.on('select2:select', function (e) {
+            if (e.params.data.id === 'all') {
+                var allValues = [];
+                $select.find('option').each(function() {
+                    var val = $(this).val();
+                    if (val && val !== 'all') {
+                        allValues.push(val);
+                    }
+                });
+                
+                // Set the value to all other options and trigger change
+                $select.val(allValues).trigger('change');
+                // Close the dropdown properly
+                $select.select2('close');
+            }
+        });
+    });
+</script>
+{% endblock %}

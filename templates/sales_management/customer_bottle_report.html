@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Customer Bottle Report{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Customer Bottle Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Sales Management</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Customer Bottle Report</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <!-- Start:: row-2 -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Customer Bottle Report
+                        </div>
+                    </div>
+                    
+                    <div id="table-container" >
+                        <div class="card-body">
+                            <table  class="table table-bordered text-wrap" style="width: 100%">
+                               <thead>
+                                    <tr>
+                                        <th>Sl No</th>
+                                        <th>Route</th>
+                                        <th>Bottles (Total Bottles)</th>
+                                        <th>View</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in route_summary %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ row.route.route_name }}</td>
+                                        <td>{{ row.total_bottles }}</td>
+                                        <td>
+                                            {% if row.total_bottles > 0 %}
+                                            <a href="{% url 'customer_bottle_route_detail' row.route.pk %}">View</a>
+                                            {% else %}
+                                            —
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="4" class="text-center text-muted py-4">No routes found.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

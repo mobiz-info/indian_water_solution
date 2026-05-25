@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %} RouteWise Daily Sales Detail - {{ route_name }} {% endblock %}
+
+{% block content %}
+
+<!-- Centering CSS -->
+<style>
+    table.center-all th,
+    table.center-all td {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+</style>
+
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">RouteWise Daily Sales Detail – {{ route_name }}</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#" class="text-white-30">Sales Management</a></li>
+        <li class="breadcrumb-item active">Route Daily Report</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+
+                    <div class="card-header">
+                        <div class="card-title">
+                           Daily Sales Report – {{ route_name }}
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <table class="table table-bordered text-wrap center-all" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th>Sl No</th>
+                                    <th>Date</th>
+                                    <th>Cash Sale Qty</th>
+                                    <th>Credit Sale Qty</th>
+                                    <th>Coupon Sale Qty</th>
+                                    <th>FOC</th>
+                                    <th>Total Sales Qty</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for row in rows %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ row.date|date:"d-m-Y" }}</td>
+                                    <td>{{ row.cash_qty }}</td>
+                                    <td>{{ row.credit_qty }}</td>
+                                    <td>{{ row.coupon_qty }}</td>
+                                    <td>{{ row.foc_qty }}</td>
+                                    <td>{{ row.total_qty }}</td>
+                                    
+                                        <td style="text-align:center;">
+                                             <a href="{% url 'product_route_salesreport_invoice_detail' %}?date={{ row.date|date:'Y-m-d' }}&route_name={{ route_name }}&selected_product_id={{ product_id }}"
+                                                class="btn btn-sm btn-primary">
+                                                 View
+                                             </a>
+                                         </td>
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2">Total:</th>
+                                    <th>{{ summary.cash_total }}</th>
+                                    <th>{{ summary.credit_total }}</th>
+                                    <th>{{ summary.coupon_total }}</th>
+                                    <th>{{ summary.foc_total }}</th>
+                                    <th>{{ summary.total_qty }}</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

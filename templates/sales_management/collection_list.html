@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %} Collection List {% endblock %}
+{% block content %}
+{% load static %}
+{% load el_pagination_tags %}
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Collection List</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-50">Sales Management</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Collection List</li>
+    </ol>
+</div>
+<!-- Page Header Close -->
+
+<!-- Start::app-content -->
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <!-- Start:: row-2 -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Collection List
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mt">
+                            <form method="GET" action="{% url 'collection_list' %}">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <label for="start_date">From Date:</label>
+                                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ filter_data.start_date }}">
+                                        </div>
+                                        <div class="col">
+                                            <label for="end_date">To Date:</label>
+                                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ filter_data.end_date }}">
+                                        </div>
+                                        <div class="col">
+                                            <label for="route_name">Routes:</label>
+                                            <select name="route_name" class="form-select">
+                                                <option value="">All Routes</option>
+                                                {% for route in route_li %}
+                                                    <option value="{{ route.route_name }}" {% if route.route_name == filter_data.route_name %}selected{% endif %}>{{ route.route_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label>Search:</label>
+                                            <input type="text" name="q" class="form-control" placeholder="Search ..." value="{{ filter_data.q }}">
+                                        </div>
+                                        <div class="col d-flex align-items-end justify-content-end gap-1 flex-wrap">
+                                            <input type="submit" class="btn btn-primary btn-sm" value="Apply Filter">
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="resetFilters()">Reset Filter</button>
+                                            <a href="{% url 'collection_list_excel' %}?start_date={{ filter_data.start_date }}&end_date={{ filter_data.end_date }}&route_name={{ filter_data.route_name }}&q={{ filter_data.q }}"
+                                               class="btn btn-success btn-sm">
+                                                <i class="ri-file-excel-2-line"></i> Excel
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="table-container" style="overflow:scroll;">
+                            <div class="card-body">
+                                <table class="table table-bordered text-wrap" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Sl.No</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Customer Name</th>
+                                            <th class="text-center">Building Name/<br>House No</th>
+                                            <th class="text-center">Customer ID</th>
+                                            <th class="text-center">Salesman</th>
+                                            <th class="text-center">Route</th>
+                                            <th class="text-center">Payment<br>Method</th>
+                                            <th class="text-center">Receipt Number</th>
+                                            <th class="text-center">Total Amount</th>
+                                            <th class="text-center">Collected Amount</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% paginate 20 instances %}
+                                        {% for instance in instances %}
+                                        <tr>
+                                            <td class="text-center">{{ forloop.counter }}</td>
+                                            <td>{{ instance.created_date }}</td>
+                                            <td>{{ instance.customer }}</td>
+                                            <td>{{ instance.customer.building_name }}<br>{{ instance.door_house_no }}</td>
+                                            <td>{{ instance.customer.custom_id }}</td>
+                                            <td>{{ instance.salesman }}</td>
+                                            <td>{{ instance.customer.routes.route_name }}</td>
+                                            <td>{{ instance.payment_method }}</td>
+                                            <td class="text-center">{{ instance.receipt_number }}</td>
+                                            <td class="text-center">{{ instance.total_amount }}</td>
+                                            <td class="text-center">{{ instance.amount_received }}</td>
+                                            <td>
+                                                <a aria-label="anchor" class="action-button remove btn btn-danger-light btn-sm ms-2"
+                                                    data-bs-toggle="tooltip" data-bs-original-title="Delete"
+                                                    data-id="{{ instance.receipt_number }}" data-text="{{ confirm_delete_message }}"
+                                                    data-title="Are you sure?"
+                                                    href="{% url 'delete_collection_payment' instance.pk %}">
+                                                    <span class="ri-delete-bin-7-line fs-14"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="12" class="text-center">No records found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="fw-bold table-light">
+                                            <td colspan="10" class="text-end">Total Collected Amount:</td>
+                                            <td class="text-center">{{ total_collected|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Pagination -->
+                    {% get_pages %}
+                    <div class="clearfix"></div>
+                    <div class="row pagi my-3">
+                        <div class="col-sm-6 col-xs-6 tot my-pagination">
+                            <div class="m-t-10 text-start">
+                                Showing {{title}}
+                                <span class="current_page_index">{{ pages.current_start_index }}</span> -
+                                <span class="current_end_status">{{ pages.current_end_index }}</span> of
+                                <span class="total_count">{{ pages.total_count }}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xs-6 text-end pagination-btn-div">{% show_pages %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End:: row-2 -->
+    </div>
+</div>
+<!-- End::app-content -->
+
+<script>
+    function resetFilters() {
+        location.href = "{% url 'collection_list' %}";
+    }
+</script>
+{% endblock %}

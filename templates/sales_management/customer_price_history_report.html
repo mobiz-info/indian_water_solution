@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% block title %} Customer 5 Gallon Price History Report {% endblock %}
+{% block content %}
+<style>
+@media print {
+    /* Hide top header */
+    header.app-header,
+    /* Hide left sidebar */
+    aside.app-sidebar,
+    /* Hide page footer / copyright */
+    footer,
+    .footer,
+    /* Hide breadcrumb */
+    .page-header-breadcrumb,
+    /* Hide all card headers */
+    .card-header,
+    /* Hide filter form and buttons */
+    form,
+    .btn-group,
+    .btn,
+    .no-print {
+        display: none !important;
+    }
+    /* Remove browser default header/footer in print */
+    @page {
+        margin: 10mm;
+    }
+    /* Expand page to full width - override the sidebar offset */
+    .page {
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+    }
+    .main-content, .app-content {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    body {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .container-fluid {
+        padding: 0 !important;
+    }
+    /* Clean card appearance */
+    .card, .card-body {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    table {
+        width: 100% !important;
+    }
+    tr { page-break-inside: avoid; }
+}
+</style>
+
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between">
+    <h4 class="fw-medium mb-0">Customer 5 Gallon Price History Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Customer Price History</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">Customer 5 Gallon Price History Report</div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="mt">
+                        <form method="GET" action="{% url 'customer_price_history_report' %}">
+                            <div class="card-body">
+                                <div class="row align-items-end g-2">
+                                    <div class="col-md-3">
+                                        <label for="from_date">From Date:</label>
+                                        <input type="date" class="form-control" id="from_date" name="from_date"
+                                               value="{{ filter_data.from_date }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="to_date">To Date:</label>
+                                        <input type="date" class="form-control" id="to_date" name="to_date"
+                                               value="{{ filter_data.to_date }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="route_name">Route:</label>
+                                        <select name="route_name" id="route_name" class="form-select select2" multiple="multiple">
+                                            <option value="all" {% if 'all' in filter_data.route_name %}selected{% endif %}>All Routes</option>
+                                            {% for route in routes_instances %}
+                                                <option value="{{ route.route_name }}"
+                                                    {% if route.route_name in filter_data.route_name %}selected{% endif %}>
+                                                    {{ route.route_name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col d-flex align-items-end justify-content-end gap-2">
+                                        <input type="submit" class="btn btn-primary btn-sm" value="Apply Filter">
+                                        {% if data_filter %}
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                                onclick="location.href='{% url 'customer_price_history_report' %}'">
+                                            Reset
+                                        </button>
+                                        <div>
+                                            <button type="button" onclick="window.print()" class="btn btn-outline-success btn-sm mx-1 no-print">
+                                                <i class="fas fa-print"></i> Print
+                                            </button>
+                                            <a href="{% url 'customer_price_history_report_excel' %}?from_date={{ filter_data.from_date }}&to_date={{ filter_data.to_date }}{% for r in filter_data.route_name %}&route_name={{ r|urlencode }}{% endfor %}" class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-file-excel"></i> Excel
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Results -->
+                    {% if data_filter %}
+                    <div class="card-body">
+                        <!-- Print Only Header -->
+                        <div class="d-none d-print-block mb-3">
+                            <h4 class="text-center mb-3">Customer 5 Gallon Price History Report</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>From Date:</strong> {{ filter_data.from_date|default:"-" }}</p>
+                                    <p class="mb-1"><strong>To Date:</strong> {{ filter_data.to_date|default:"-" }}</p>
+                                </div>
+                                <div class="col-6 text-end text-right">
+                                    <p class="mb-1"><strong>Report Date:</strong> {% now "d M Y h:i A" %}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if price_history_data %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-wrap" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-bold" colspan="6">5 Gallon Price History</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:center;">Customer ID</th>
+                                        <th style="text-align:center;">Customer Name</th>
+                                        <th style="text-align:center;">Route</th>
+                                        <th style="text-align:center;">Old Price (AED)</th>
+                                        <th style="text-align:center;">New Price (AED)</th>
+                                        <th style="text-align:center;">Changed Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in price_history_data %}
+                                    <tr>
+                                        <td style="text-align:center;">{{ row.customer.custom_id }}</td>
+                                        <td style="text-align:center;">{{ row.customer.customer_name }}</td>
+                                        <td style="text-align:center;">{{ row.customer.routes.route_name }}</td>
+                                        <td style="text-align:center;">{{ row.old_price }}</td>
+                                        <td style="text-align:center;">{{ row.new_price }}</td>
+                                        <td style="text-align:center;">{{ row.created_date|date:"d M Y, h:i A" }}</td>
+                                        <!-- <td style="text-align:center;">{{ row.created_by }}</td> -->
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            No price history data found for the selected routing and date range.
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block static %}
+<script>
+    $(document).ready(function() {
+        var $select = $('#route_name');
+        
+        $select.select2({
+            placeholder: "-- Select Routes --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // When "All Routes" is selected, select every individual route instead
+        $select.on('select2:select', function (e) {
+            if (e.params.data.id === 'all') {
+                var allValues = [];
+                $select.find('option').each(function() {
+                    var val = $(this).val();
+                    if (val && val !== 'all') {
+                        allValues.push(val);
+                    }
+                });
+                
+                // Set the value to all other options and trigger change
+                $select.val(allValues).trigger('change');
+                // Close the dropdown properly
+                $select.select2('close');
+            }
+        });
+    });
+</script>
+{% endblock %}

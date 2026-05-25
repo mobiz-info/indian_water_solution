@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %} Invoice Wise Report - {{ route_name }} {% endblock %}
+
+{% block content %}
+
+<style>
+    table.center-table th, table.center-table td {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+</style>
+
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between">
+    <h4 class="fw-medium mb-0">
+        Invoice Wise Sales – {{ route_name }} 
+    </h4>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+
+        <div class="card custom-card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="card-title">Invoice Wise Report</div>
+
+                <!-- Search Input -->
+                <input type="text" id="searchInput" class="form-control"
+                       placeholder="Search Customer Name, ID, Invoice No"
+                       style="width: 300px;">
+            </div>
+
+            <div class="card-body">
+
+               <table class="table table-bordered center-table" id="invoiceTable">
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Customer Name</th>
+                            <th>Customer ID</th>
+                            <th>Invoice Number</th>
+                            <th>Invoice Type</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ row.customer_name }}</td>
+                            <td>{{ row.customer_id }}</td>
+                            <td>{{ row.invoice_no }}</td>
+                            <td>{{ row.invoice_type }}</td>
+                            <td>{{ row.qty }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" style="text-align:right;">Total Qty:</th>
+                            <th>{{ total_qty }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+     // Search filter for Customer Name, Customer ID, Invoice Number, Invoice Type
+     document.getElementById("searchInput").addEventListener("keyup", function () {
+         const filter = this.value.toLowerCase();
+         const rows = document.querySelectorAll("#invoiceTable tbody tr");
+ 
+         rows.forEach(row => {
+             const customerName = row.children[1].textContent.toLowerCase();
+             const customerId = row.children[2].textContent.toLowerCase();
+             const invoiceNo = row.children[3].textContent.toLowerCase();
+             const invoiceType = row.children[4].textContent.toLowerCase();
+ 
+             const match =
+                 customerName.includes(filter) ||
+                 customerId.includes(filter) ||
+                 invoiceNo.includes(filter) ||
+                 invoiceType.includes(filter);
+ 
+             row.style.display = match ? "" : "none";
+         });
+     });
+ </script>
+ 
+
+{% endblock %}

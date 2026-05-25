@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Print Customer Count</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        @media print {
+            body {
+                margin: 0;
+                padding: 10px;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .card {
+                border: none;
+                box-shadow: none;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #000 !important;
+                padding: 6px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+
+    <div class="text-center mb-3">
+        <h4><strong>Route Wise Customer Count</strong></h4>
+        <p>Date: {{ now|date:"d-m-Y" }}</p>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Sl No</th>
+                <th>Route</th>
+                <th>Salesman</th>
+                <th>Cash</th>
+                <th>Credit</th>
+                <th>Coupon</th>
+                <th>FOC</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in customer_counts %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ row.route_name }}</td>
+                <td>{{ row.sales_man }}</td>
+                <td class="text-right">{{ row.cash }}</td>
+                <td class="text-right">{{ row.credit }}</td>
+                <td class="text-right">{{ row.coupon }}</td>
+                <td class="text-right">{{ row.foc }}</td>
+                <td class="text-right">{{ row.total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No data available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">TOTAL</th>
+                <th>{{ total_cash }}</th>
+                <th>{{ total_credit }}</th>
+                <th>{{ total_coupon }}</th>
+                <th>{{ total_foc }}</th>
+                <th>{{ total_customers }}</th>
+            </tr>
+        </tfoot>
+    </table>
+
+</div>
+
+<script>
+    window.onload = function () {
+        window.print();
+    };
+</script>
+
+</body>
+</html>

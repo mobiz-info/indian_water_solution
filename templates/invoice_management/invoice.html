@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between">
+        <h4 class="fw-medium mb-0">Invoice</h4>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-50">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Invoice</li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <style>
+        /* ── Print Styles ── */
+        @media print {
+            .sidebar, .header, .footer, .page-header-breadcrumb,
+            .no-print, nav, .navbar, [class*="sidebar"] {
+                display: none !important;
+            }
+            .main-content { margin: 0 !important; padding: 0 !important; }
+            .container-fluid { padding: 0 !important; }
+            .card { box-shadow: none !important; border: none !important; }
+            .invoice-header-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { background: white !important; }
+        }
+
+        /* ── Invoice Styles ── */
+        .invoice-header-box {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: white;
+            border-radius: 8px 8px 0 0;
+            padding: 20px 28px;
+        }
+        .invoice-header-box h5 {
+            color: white;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .inv-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #9a9a9a;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .inv-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        .invoice-table thead th {
+            background-color: #f4f6fb;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            font-weight: 700;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .invoice-table tbody tr:hover {
+            background-color: #fafafa;
+        }
+        .invoice-table tbody td {
+            font-size: 13px;
+            vertical-align: middle;
+            padding: 10px 12px;
+        }
+        .summary-line td {
+            border: none;
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+        .grand-total-line td {
+            border-top: 2px solid #4e54c8 !important;
+            padding: 10px 12px;
+        }
+        .grand-total-amount {
+            font-size: 22px;
+            font-weight: 800;
+            color: #4e54c8;
+        }
+        .badge-paid   { background: #d1f2e8; color: #0d6832; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; }
+        .badge-unpaid { background: #fff3cd; color: #856404; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; }
+        .print-btn {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: white;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .print-btn:hover { opacity: 0.9; color: white; }
+    </style>
+
+    <div class="main-content app-content">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-xl-9 col-lg-11">
+
+                    <!-- ── Top Action Bar (hidden on print) ── -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+                        <a href="{% url 'invoice:invoice_list' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-arrow-left me-1"></i> Back to List
+                        </a>
+                        <button class="print-btn" onclick="window.print()">
+                            <i class="fa fa-print"></i> Print Invoice
+                        </button>
+                    </div>
+
+                    <!-- ── Invoice Card ── -->
+                    <div class="card" style="border-radius:10px; overflow:hidden;">
+
+                        <!-- Header Banner -->
+                        <div class="invoice-header-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h5><i class="fa fa-file-alt me-2"></i>TAX INVOICE</h5>
+                                {% if instance.customer.branch_id %}
+                                    <small style="opacity:.85;">{{ instance.customer.branch_id.name }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="text-end">
+                                {% if instance.invoice_status == 'paid' %}
+                                    <span class="badge-paid">✔ Paid</span>
+                                {% else %}
+                                    <span class="badge-unpaid">⚠ Unpaid</span>
+                                {% endif %}
+                                <div class="mt-1" style="font-size:12px; opacity:.9;">
+                                    {{ instance.get_invoice_type_display }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4">
+
+                            <!-- ── Meta Section ── -->
+                            <div class="row mb-4">
+
+                                <!-- Bill To -->
+                                <div class="col-md-6">
+                                    <div class="inv-label">Bill To</div>
+                                    <div class="inv-value mb-1" style="font-size:18px; font-weight:700; color:#2d2d2d;">{{ instance.customer.customer_name }}</div>
+                                    {% if instance.customer.custom_id %}
+                                        <div class="text-muted" style="font-size:12px;">ID: {{ instance.customer.custom_id }}</div>
+                                    {% endif %}
+                                    <div class="text-muted" style="font-size:13px; line-height:1.6;">
+                                        {% if instance.customer.building_name %}{{ instance.customer.building_name }}{% endif %}
+                                        {% if instance.customer.door_house_no %}, {{ instance.customer.door_house_no }}{% endif %}
+                                        {% if instance.customer.floor_no %}, Floor {{ instance.customer.floor_no }}{% endif %}
+                                        {% if instance.customer.location %}<br>{{ instance.customer.location }}{% endif %}
+                                        {% if instance.customer.routes %}<br>Route: {{ instance.customer.routes }}{% endif %}
+                                        {% if instance.customer.mobile_no %}<br><i class="fa fa-phone me-1"></i>{{ instance.customer.mobile_no }}{% endif %}
+                                        {% if instance.customer.email_id %}<br><i class="fa fa-envelope me-1"></i>{{ instance.customer.email_id }}{% endif %}
+                                        {% if instance.customer.trn %}<br>TRN: {{ instance.customer.trn }}{% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Invoice Details -->
+                                <div class="col-md-6 mt-3 mt-md-0">
+                                    <div class="text-md-end">
+                                        <div class="mb-2">
+                                            <div class="inv-label">Invoice No</div>
+                                            <div class="inv-value fs-5 text-primary">{{ instance.invoice_no }}</div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <div class="inv-label">Invoice Date</div>
+                                            <div class="inv-value">
+                                                {% if instance.invoice_date %}
+                                                    {{ instance.invoice_date|date:"d M Y" }}
+                                                {% else %}
+                                                    {{ instance.created_date|date:"d M Y" }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% if instance.salesman %}
+                                        <div class="mb-2">
+                                            <div class="inv-label">Salesman</div>
+                                            <div class="inv-value">{{ instance.salesman.get_full_name|default:instance.salesman.username }}</div>
+                                        </div>
+                                        {% endif %}
+                                        {% if instance.reference_no %}
+                                        <div class="mb-2">
+                                            <div class="inv-label">Reference No</div>
+                                            <div class="inv-value">{{ instance.reference_no }}</div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div><!-- /row -->
+
+                            <hr class="my-3">
+
+                            <!-- ── Items Table ── -->
+                            <h6 class="fw-bold mb-3" style="color:#4e54c8; font-size:13px; letter-spacing:.5px;">ORDER SUMMARY</h6>
+                            <div class="table-responsive">
+                                <table class="table invoice-table table-bordered mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:45px;">#</th>
+                                            <th>Category</th>
+                                            <th>Product</th>
+                                            <th class="text-center">Qty</th>
+                                            <th class="text-end">Rate</th>
+                                            <th class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in instance.invoice_items %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {% if item.category %}{{ item.category.category_name }}{% else %}<span class="text-muted">—</span>{% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.product_items %}{{ item.product_items.product_name }}{% else %}<span class="text-muted">—</span>{% endif %}
+                                            </td>
+                                            <td class="text-center">{{ item.qty|floatformat:2 }}</td>
+                                            <td class="text-end">{{ item.customer_rate|floatformat:2 }}</td>
+                                            <td class="text-end fw-semibold">{{ item.line_total|floatformat:2 }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">No items found.</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        <!-- Spacer -->
+                                        <tr><td colspan="6" style="border:none; height:6px;"></td></tr>
+
+                                        <!-- Sub Total -->
+                                        <tr class="summary-line">
+                                            <td colspan="5" class="text-end text-muted">Sub Total</td>
+                                            <td class="text-end text-muted">{{ instance.sub_total|floatformat:2 }}</td>
+                                        </tr>
+
+                                        <!-- Discount -->
+                                        <tr class="summary-line">
+                                            <td colspan="5" class="text-end text-muted">Discount</td>
+                                            <td class="text-end text-muted">{{ instance.discount|floatformat:2 }}</td>
+                                        </tr>
+
+                                        <!-- Net Taxable -->
+                                        <tr class="summary-line">
+                                            <td colspan="5" class="text-end text-muted">Net Taxable</td>
+                                            <td class="text-end text-muted">{{ instance.amount_before_vat|floatformat:2 }}</td>
+                                        </tr>
+
+                                        <!-- VAT Amount -->
+                                        <tr class="summary-line">
+                                            <td colspan="5" class="text-end text-muted">VAT Amount</td>
+                                            <td class="text-end text-muted">{{ instance.vat_amount|floatformat:2 }}</td>
+                                        </tr>
+
+                                        <!-- Grand Total -->
+                                        <tr class="grand-total-line">
+                                            <td colspan="5" class="text-end fw-bold" style="font-size:16px;">Total</td>
+                                            <td class="text-end">
+                                                <span class="grand-total-amount" style="font-size:28px; font-weight:800; color:#4e54c8;">{{ instance.amout_total|floatformat:2 }}</span>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Amount Received -->
+                                        <tr class="summary-line">
+                                            <td colspan="5" class="text-end text-muted">Amount Received</td>
+                                            <td class="text-end text-muted">{{ instance.amout_recieved|floatformat:2 }}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div><!-- /table-responsive -->
+
+                            <!-- ── Footer ── -->
+                            <!-- <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <p class="text-muted mb-0" style="font-size:12px;">
+                                    Thank you for your business. This is a computer-generated invoice.
+                                </p>
+                                <!-- Print button at the bottom too (hidden on print) -->
+                                <button class="print-btn no-print" onclick="window.print()">
+                                    <i class="fa fa-print"></i> Print Invoice
+                                </button>
+                            </div> -->
+
+                        </div><!-- /card-body -->
+                    </div><!-- /card -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block static %}
+{% load static %}
+<script>
+    // Both print buttons trigger window.print() — already handled via onclick
+    // No innerHTML replacement needed; CSS handles print layout
+</script>
+{% endblock static %}

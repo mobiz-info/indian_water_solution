@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %} Custody Report {% endblock %}
+{% block content %}
+{% load static %}
+
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Custody Item Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Client Management</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Custody Issue</li>
+    </ol>
+</div>
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <!-- Start:: row-2 -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Custody Issue
+                        </div>
+                    </div>
+                    <div class="mt">
+                        <form method="get">
+                            <div class="row mt-3">
+                                
+                                <div class="row col-md-6" >
+                                    <div id="datePeriodDiv" class="row col-12" style="flex-direction: row;
+                                    justify-content: space-around;
+                                    align-items: flex-end;margin-left: 5px;">
+                                        
+                                        <div class="col-md-4">
+                                            <label for="start_date">From Date:</label>
+                                            <input name="start_date" type="date" class="form-select"  value="{% if start_date %}{{ start_date }}{% endif %}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="end_date">To Date:</label>
+                                            <input name="end_date" type="date" class="form-select"  value="{% if end_date %}{{ end_date }}{% endif %}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Route</label>
+                                            <select name="route" class="form-select">
+                                                <option value="">All Routes</option>
+                                                {% for route in routes %}
+                                                    <option value="{{ route.route_id }}"
+                                                        {% if selected_route == route.route_id|stringformat:"s" %}selected{% endif %}>
+                                                        {{ route.route_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6 mt-4">
+                                     
+                                    <div class="col-md-5 text-end">
+                                        <input type="submit" class="btn btn-primary btn-sm" value="Apply Filter">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="resetFilters()">Reset Filter</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 ms-auto d-flex align-items-center gap-2 mt-4 " style="justify-content: center;" >
+                                            <label class="me-3">
+                                                <input type="radio" name="type" value="custody"
+                                                    {% if report_type == 'custody' %}checked{% endif %}
+                                                    onchange="this.form.submit()">
+                                                Issue
+                                            </label>
+
+                                            <label class="ms-3">
+                                                <input type="radio" name="type" value="return"
+                                                    {% if report_type == 'return' %}checked{% endif %}
+                                                    onchange="this.form.submit()">
+                                                PullOut
+                                            </label>
+                                        </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div id="table-container" >
+                        <div class="card-body">
+                            <div class="d-flex justify-content-end mb-3">
+
+                                <a href="{% url 'custody_issue_excel' %}?start_date={{ start_date }}&end_date={{ end_date }}&route={{ selected_route.id }}&report_type={{ report_type }}"
+                                class="btn btn-success me-2">
+                                    <i class="fa fa-file-excel"></i> Excel
+                                </a>
+
+                                <a href="{% url 'print_custody_issue' %}?start_date={{ start_date }}&end_date={{ end_date }}&route={{ selected_route.id }}&report_type={{ report_type }}"
+                                target="_blank"
+                                class="btn btn-primary">
+                                    <i class="fa fa-print"></i> Print
+                                </a>
+
+                            </div>
+
+                            <table  class="table table-bordered text-wrap" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Sl No</th>
+                                        <th rowspan="2">Customer/<br>Customer Id/<br>Mobile No</th>
+                                        <th rowspan="2">Route</th>
+                                        <th colspan="2">5 Gallon</th>
+                                        <th colspan="2">Dispenser</th>
+                                        <th colspan="2">Cooler</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Deposit</th>
+                                        <th>Non-Deposit</th>
+                                        <th>Deposit</th>
+                                        <th>Non-Deposit</th>
+                                        <th>Deposit</th>
+                                        <th>Non-Deposit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% load el_pagination_tags %}
+                                    {% paginate 50 customer_product_counts %}
+                                    {% for customer, product_counts in customer_product_counts%}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ customer.customer_name }}/<br>{{ customer.custom_id }}/<br>{{ customer.mobile_no }}</td>
+                                        
+                                        <td>{{ customer.routes }}</td>
+                                        <td>{{ product_counts.5_gallon_deposit }}</td>
+                                        <td>{{ product_counts.5_gallon_non_deposit }}</td>
+                                        <td>{{ product_counts.dispenser_deposit }}</td>
+                                        <td>{{ product_counts.dispenser_non_deposit }}</td>
+                                        <td>{{ product_counts.cooler_deposit }}</td>
+                                        <td>{{ product_counts.cooler_non_deposit }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% get_pages %}
+                        <div class="clearfix"></div>
+                        <div class="row pagi my-3">
+                            <div class="col-sm-6 col-xs-6 tot my-pagination">
+                                <div class="m-t-10 text-start">
+                                    Showing {{title}}
+                                    <span class="current_page_index">{{ pages.current_start_index }}</span> - <span
+                                    class="current_end_status">{{ pages.current_end_index }}</span> of <span
+                                    class="total_count">{{ pages.total_count }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xs-6 text-end pagination-btn-div">{% show_pages %}</div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+ $('#submit').click(function(e){ 
+    e.preventDefault();       
+            // Show the table when dates are selected
+            $('#table-container').show();
+    });
+</script>
+<script>
+    function resetFilters() {
+        // Redirect to the same page
+        location.href = "{% url 'custody_issue' %}";
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block title %} Detailed Delivery Report {% endblock %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Detailed Delivery Report</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Sales Management </a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detailed Delivery Report</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <!-- Start:: row-2 -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-title">Detailed Delivery Report</div>
+                        <div class="d-flex">
+                            <form action="{% url 'detailed_delivery_report_print' %}" method="get" target="_blank" class="d-inline">
+                                <input type="hidden" name="year" value="{{ selected_year }}">
+                                <input type="hidden" name="month" value="{{ selected_month }}">
+                                <input type="hidden" name="route_id" value="{{ selected_route_id }}">
+                                <input type="hidden" name="search" value="{{ search_query }}">
+                                {% if report_data %}
+                                <button type="submit" class="btn btn-primary btn-wave mx-1"><i class="ri-printer-line"></i> Print/PDF</button>
+                                {% endif %}
+                            </form>
+                            <form action="{% url 'detailed_delivery_report_excel' %}" method="get" target="_blank" class="d-inline">
+                                <input type="hidden" name="year" value="{{ selected_year }}">
+                                <input type="hidden" name="month" value="{{ selected_month }}">
+                                <input type="hidden" name="route_id" value="{{ selected_route_id }}">
+                                <input type="hidden" name="search" value="{{ search_query }}">
+                                {% if report_data %}
+                                <button type="submit" class="btn btn-outline-success btn-wave mx-1"><i class="fas fa-file-excel"></i> Excel</button>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="mt">
+                        <form method="GET">
+                            <div class="card-body pb-0">
+                                <div class="row align-items-end">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="route_id" class="form-label">Route:</label>
+                                        <select class="form-select" id="route_id" name="route_id">
+                                            <option value="">Select Route</option>
+                                            {% for route in routes %}
+                                                <option value="{{ route.route_id }}" {% if route.route_id|stringformat:"s" == selected_route_id|stringformat:"s" %}selected{% endif %}>{{ route.route_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="year" class="form-label">Year:</label>
+                                        <select class="form-select" id="year" name="year">
+                                            {% for y in year_choices %}
+                                                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="month" class="form-label">Month:</label>
+                                        <select class="form-select" id="month" name="month">
+                                            {% for m_val, m_label in month_choices %}
+                                                <option value="{{ m_val }}" {% if m_val == selected_month %}selected{% endif %}>{{ m_label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="search" class="form-label">Search:</label>
+                                        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Customer Name/ID">
+                                    </div>
+                                    <div class="col-md-3 mb-3 d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary flex-grow-1">Apply</button>
+                                        <a href="{% url 'detailed_delivery_report' %}" class="btn btn-secondary flex-grow-1">Reset</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <div id="table-container">
+                            {% if not selected_route_id %}
+                                <div class="card-body">
+                                    <div class="alert alert-info text-center">
+                                        Please select a route to view the report.
+                                    </div>
+                                </div>
+                            {% elif report_data %}
+                                <div class="card-body">
+                                    <table class="table table-bordered text-wrap" style="width: 100%">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center text-bold" colspan="40">Detailed Delivery Report</th>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align:center;">Sl No</th>
+                                                <th style="text-align:center;">Route</th>
+                                                <th style="text-align:center;">Cust ID</th>
+                                                <th style="text-align:center;">Customer Name</th>
+                                                <th style="text-align:center;">Created Date</th>
+                                                <th style="text-align:center;">Location</th>
+                                                <th style="text-align:center;">Price</th>
+                                                <th style="text-align:center;">Bottle Status<br></th>
+                                                {% for d in days %}
+                                                    <th style="text-align:center;">{{ d }}</th>
+                                                {% endfor %}
+                                                <th style="text-align:center;">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for row in report_data %}
+                                                <tr>
+                                                    <td style="text-align:center;">{{ forloop.counter }}</td>
+                                                    <td style="text-align:center;">{{ row.route_name }}</td>
+                                                    <td style="text-align:center;">{{ row.custom_id }}</td>
+                                                    <td>{{ row.customer_name }}</td>
+                                                    <td>{{ row.created_date }}</td>
+                                                    <td>{{ row.location|default:"-" }}</td>
+                                                    <td>{{ row.price|default:"-" }}</td>
+                                                    <td style="text-align:center;">{{ row.bottle_status }}</td>
+                                                    {% for count in row.daily_counts %}
+                                                        <td style="text-align:center;">
+                                                            {% if count == 0 %}
+                                                            -
+                                                            {% else %}
+                                                            {{ count }}
+                                                            {% endif %}
+                                                        </td>
+                                                    {% endfor %}
+                                                    <td style="text-align:center; font-weight: bold;">{{ row.total }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="card-body">
+                                    <div class="alert alert-warning text-center">
+                                        No records found for {{ route_obj.route_name }} in {{ month_name }} {{ selected_year }}.
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+{% endblock %}

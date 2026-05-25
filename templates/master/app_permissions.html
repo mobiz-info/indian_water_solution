@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between">
+    <h4 class="fw-medium mb-0">App Permissions</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-50">Master</a></li>
+        <li class="breadcrumb-item active" aria-current="page">App Permissions</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} mb-3" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card custom-card">
+                    <div class="card-header justify-content-between">
+                        <div class="card-title">Manage Mobile App Route Permissions</div>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'update_app_permissions' %}" method="POST">
+                            {% csrf_token %}
+
+                            <!-- Customer Rate Edit Permission -->
+                            <div class="row align-items-center border rounded p-3 mb-3" style="background:#f8f9fa;">
+                                <!-- Description -->
+                                <div class="col-12 col-md-4 mb-2 mb-md-0">
+                                    <h6 class="fw-semibold mb-1">Customer Rate Edit</h6>
+                                    <p class="text-muted fs-12 mb-0">Allow salesmen on selected routes to edit customer water rates in the mobile app.</p>
+                                </div>
+
+                                <!-- Toggle -->
+                                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                                    <label class="form-label text-muted fs-12 mb-1 d-block">Status</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input class="form-check-input" type="checkbox" role="switch"
+                                               id="is_active" name="is_active"
+                                               {% if permission.is_active %}checked{% endif %}
+                                               style="width: 44px; height: 22px; cursor: pointer; margin-top:0;">
+                                        <label class="fs-12 mb-0" for="is_active" id="toggle_label">
+                                            {% if permission.is_active %}Active{% else %}Inactive{% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Routes selector -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label text-muted fs-12 mb-1">Permitted Routes</label>
+                                    <select id="routes_select" class="form-control w-100"
+                                            name="routes" multiple="multiple"
+                                            data-placeholder="Choose routes...">
+                                        {% for route in routes %}
+                                            <option value="{{ route.route_id }}"
+                                                {% if permission and route in permission.routes.all %}selected{% endif %}>
+                                                {{ route.route_name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-primary btn-wave px-4">
+                                    <i class="fe fe-save me-1"></i> Save Permissions
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block static %}
+<script>
+    $(document).ready(function () {
+        $('#routes_select').select2({
+            theme: "bootstrap-5",
+            placeholder: "Choose routes...",
+            allowClear: true,
+            width: '100%',
+            closeOnSelect: false,
+        });
+
+        const toggle = document.getElementById('is_active');
+        const label = document.getElementById('toggle_label');
+        toggle.addEventListener('change', function () {
+            label.textContent = this.checked ? 'Active' : 'Inactive';
+        });
+    });
+</script>
+{% endblock static %}

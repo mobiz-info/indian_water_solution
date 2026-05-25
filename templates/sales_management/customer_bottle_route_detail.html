@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}{{ route.route_name }} – Bottle Detail{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header-breadcrumb d-md-flex d-block align-items-center justify-content-between ">
+    <h4 class="fw-medium mb-0">Customer Bottle Report – <span class="text-primary">{{ route.route_name }}</span></h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);" class="text-white-30">Sales Management</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Customer Bottle Report Detail</li>
+    </ol>
+</div>
+
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <!-- Start:: row-2 -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-title">
+                            Customer Bottle Report
+                        </div>
+                        <a href="{% url 'customer_bottle_report' %}" class="btn btn-light btn-sm">
+                            <i class="ri-arrow-left-line me-1"></i>Back to Routes
+                        </a>
+                    </div>
+                    
+                    <div class="mt">
+                        <form method="get">
+                            <div class="row mt-3 mx-2">
+                                <div class="col-md-4 d-flex gap-2">
+                                    <input type="text" name="search" value="{{ search }}"
+                                           class="form-control form-control-sm"
+                                           placeholder="Search by Customer ID or Name…">
+                                    <button type="submit" class="btn btn-primary btn-sm px-3">
+                                      <i class="ri-search-line"></i>
+                                    </button>
+                                    {% if search %}
+                                    <a href="{% url 'customer_bottle_route_detail' route.pk %}" class="btn btn-outline-secondary btn-sm">
+                                      <i class="ri-close-line"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="table-container" >
+                        <div class="card-body">
+                            <table class="table table-bordered text-wrap" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th>Sl No</th>
+                                        <th>Customer ID</th>
+                                        <th>Customer Name</th>
+                                        <th>Building Number</th>
+                                        <th>Bottles</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in customer_data %}
+                                    <tr>
+                                        <td>{{ row.sl_no }}</td>
+                                        <td>{{ row.customer.custom_id|default:"—" }}</td>
+                                        <td>{{ row.customer.customer_name }}</td>
+                                        <td>
+                                            {{ row.customer.building_name|default:"" }}
+                                            {% if row.customer.door_house_no %}, {{ row.customer.door_house_no }}{% endif %}
+                                        </td>
+                                        <td>{{ row.total_bottles }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            {% if search %}No customers matching "{{ search }}".{% else %}No customers found.{% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                {% if customer_data %}
+                                <tfoot class="fw-bold">
+                                    <tr>
+                                        <td colspan="4" class="text-end">Total</td>
+                                        <td>{{ total_bottles }}</td>
+                                    </tr>
+                                </tfoot>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

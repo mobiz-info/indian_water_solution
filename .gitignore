@@ -43,4 +43,4 @@ settings.ini
 *-firebase-adminsdk-*.json
 
 # Generated static files from collectstatic and custom static assets
-static/
+# static/

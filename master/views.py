@@ -1011,8 +1011,10 @@ class Route_Create(View):
             data = form.save(commit=False)
             data.created_by = str(request.user.id)
             
-            branch_id=request.user.branch_id.branch_id
-            branch = BranchMaster.objects.get(branch_id=branch_id)  # Adjust the criteria based on your model
+            if request.user.branch_id:
+                branch = request.user.branch_id
+            else:
+                branch = form.cleaned_data.get('branch_id') or BranchMaster.objects.first()
             data.branch_id = branch
             data.save()
             messages.success(request, 'Route Successfully Added.', 'alert-success')
@@ -1193,8 +1195,10 @@ class Location_Adding(View):
         try:
             if form.is_valid():
                 data = form.save(commit=False)
-                branch_id=request.user.branch_id.branch_id
-                branch = BranchMaster.objects.get(branch_id=branch_id)
+                if request.user.branch_id:
+                    branch = request.user.branch_id
+                else:
+                    branch = BranchMaster.objects.first()
                 data.branch_id = branch
                 data.created_by = str(request.user)
                 data.save()

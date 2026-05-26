@@ -24,7 +24,7 @@ class User_Create_Form(forms.ModelForm):
     
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'username', 'user_type', 'password', 'branch_id', 'staff_id', 'designation_id', 'blood_group', 'permanent_address', "present_address", 'phone', 'email', 'labour_card_no', 'labour_card_expiry', 'driving_licence_no', 'driving_licence_expiry', 'licence_issued_by', 'visa_issued_by', 'visa_no', 'visa_expiry', 'emirates_id_no', 'emirates_expiry', 'health_card_no', 'health_card_expiry', 'base_salary', 'wps_percentage', 'wps_ref_no', 'insurance_no', 'insurance_expiry', 'insurance_company','nationality','visa_type','passport_number','passport_expiry','joining_date']
+        fields = ['first_name', 'username', 'user_type', 'password', 'branch_id', 'staff_id', 'designation_id', 'blood_group', 'permanent_address', "present_address", 'phone', 'email', 'labour_card_no', 'labour_card_expiry', 'driving_licence_no', 'driving_licence_expiry', 'licence_issued_by', 'visa_issued_by', 'visa_no', 'visa_expiry', 'districts_id_no', 'districts_expiry', 'health_card_no', 'health_card_expiry', 'base_salary', 'wps_percentage', 'wps_ref_no', 'insurance_no', 'insurance_expiry', 'insurance_company','nationality','visa_type','passport_number','passport_expiry','joining_date']
         widgets = {
             'first_name':forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'username': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
@@ -45,7 +45,7 @@ class User_Create_Form(forms.ModelForm):
             "driving_licence_expiry" :   forms.DateInput(attrs={'class': 'form-control','type':'date', 'required': False}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'required': 'true'}),
             'visa_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
-            'emirates_id_no':forms.TextInput(attrs={'class': 'form-control', 'required': False}),
+            'districts_id_no':forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'health_card_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'base_salary': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'wps_percentage': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
@@ -53,7 +53,7 @@ class User_Create_Form(forms.ModelForm):
             'insurance_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'insurance_company': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'visa_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date','required': False}),
-            'emirates_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date','required': False}),
+            'districts_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date','required': False}),
             'health_card_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date', 'required': False}),
             'insurance_expiry': forms.DateInput(attrs={'class': 'form-control','type':'date', 'required': False}),
             "nationality" :forms.TextInput(attrs={'class': 'form-control', 'required': False}),
@@ -67,13 +67,13 @@ class User_Create_Form(forms.ModelForm):
 class User_Edit_Form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['visa_issued_by'].queryset = EmirateMaster.objects.filter()
+        self.fields['visa_issued_by'].queryset = DistrictMaster.objects.filter()
         self.fields['designation_id'].queryset = DesignationMaster.objects.filter()
         self.fields['branch_id'].queryset = BranchMaster.objects.filter()
-        self.fields['licence_issued_by'].queryset = EmirateMaster.objects.filter()
+        self.fields['licence_issued_by'].queryset = DistrictMaster.objects.filter()
     class Meta:
         model = CustomUser
-        fields = ['first_name','username' ,'branch_id', 'user_type', 'staff_id', 'designation_id','blood_group','permanent_address',"present_address", 'phone','email','labour_card_no','labour_card_expiry','driving_licence_no','driving_licence_expiry','licence_issued_by','visa_issued_by','visa_no','visa_expiry','emirates_id_no','emirates_expiry','health_card_no','health_card_expiry','base_salary','wps_percentage','wps_ref_no','insurance_no','insurance_expiry','insurance_company','nationality','visa_type','passport_number','passport_expiry','joining_date']
+        fields = ['first_name','username' ,'branch_id', 'user_type', 'staff_id', 'designation_id','blood_group','permanent_address',"present_address", 'phone','email','labour_card_no','labour_card_expiry','driving_licence_no','driving_licence_expiry','licence_issued_by','visa_issued_by','visa_no','visa_expiry','districts_id_no','districts_expiry','health_card_no','health_card_expiry','base_salary','wps_percentage','wps_ref_no','insurance_no','insurance_expiry','insurance_company','nationality','visa_type','passport_number','passport_expiry','joining_date']
         widgets = {
             'first_name':forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'username': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
@@ -94,7 +94,7 @@ class User_Edit_Form(forms.ModelForm):
             "driving_licence_expiry" :   forms.DateInput(attrs={'class': 'form-control','type':'date', 'required': False}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'required': 'true'}),
             'visa_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
-            'emirates_id_no':forms.TextInput(attrs={'class': 'form-control', 'required': False}),
+            'districts_id_no':forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'health_card_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'base_salary': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'wps_percentage': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
@@ -102,7 +102,7 @@ class User_Edit_Form(forms.ModelForm):
             'insurance_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'insurance_company': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'visa_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date','required': False}),
-            'emirates_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date','required': False}),
+            'districts_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date','required': False}),
             'health_card_expiry': forms.DateInput(attrs={'class': 'form-control', 'type':'date', 'required': False}),
             'insurance_expiry': forms.DateInput(attrs={'class': 'form-control','type':'date', 'required': False}),
             "nationality" :forms.TextInput(attrs={'class': 'form-control', 'required': False}),
@@ -122,7 +122,7 @@ class CustomercreateForm(forms.ModelForm):
     class Meta:
         
         model = Customers
-        fields = ['customer_name','building_name','door_house_no','floor_no','sales_staff','routes','emirate','location','mobile_no','whats_app','email_id','gps_latitude','gps_longitude','customer_type','rate','sales_type','no_of_bottles_required','max_credit_limit','credit_days','no_of_permitted_invoices','is_calling_customer','five_g_count_limit', 'eligible_foc','gps_module_active']
+        fields = ['customer_name','building_name','door_house_no','floor_no','sales_staff','routes','district','location','mobile_no','whats_app','email_id','gps_latitude','gps_longitude','customer_type','rate','sales_type','no_of_bottles_required','max_credit_limit','credit_days','no_of_permitted_invoices','is_calling_customer','five_g_count_limit', 'eligible_foc','gps_module_active']
         widgets = {
             'customer_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
             'building_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
@@ -130,7 +130,7 @@ class CustomercreateForm(forms.ModelForm):
             'floor_no': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
             'sales_staff': forms.Select(attrs={'class': 'form-control', 'required': True}),
             'routes': forms.Select(attrs={'class': 'form-control', 'required': True}),
-            'emirate':forms.Select(attrs={'class': 'form-control', 'required': True,'id':'id_emirate'}),
+            'district':forms.Select(attrs={'class': 'form-control', 'required': True,'id':'id_district'}),
             'location': forms.Select(attrs={'class': 'form-control', 'required': True,'id':'id_location'}),
             'mobile_no': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
             'whats_app': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
@@ -176,13 +176,13 @@ class CustomerEditForm(forms.ModelForm):
             
         self.fields['sales_staff'].queryset = queryset.distinct()
         self.fields['routes'].queryset = RouteMaster.objects.filter(branch_id=branch)
-        # self.fields['emirate'].queryset = EmirateMaster.objects.filter()
+        # self.fields['district'].queryset = DistrictMaster.objects.filter()
         # self.fields['location'].queryset = LocationMaster.objects.filter(branch_id = branch)
         self.fields['rate'].widget.attrs['readonly'] = True
         
     class Meta:
         model = Customers
-        fields = ['customer_name','building_name','door_house_no','floor_no','sales_staff','routes','emirate','location','mobile_no','whats_app','email_id','gps_latitude','gps_longitude','customer_type','rate','sales_type','no_of_bottles_required','max_credit_limit','credit_days','no_of_permitted_invoices','is_active','is_calling_customer','five_g_count_limit', 'eligible_foc','gps_module_active']
+        fields = ['customer_name','building_name','door_house_no','floor_no','sales_staff','routes','district','location','mobile_no','whats_app','email_id','gps_latitude','gps_longitude','customer_type','rate','sales_type','no_of_bottles_required','max_credit_limit','credit_days','no_of_permitted_invoices','is_active','is_calling_customer','five_g_count_limit', 'eligible_foc','gps_module_active']
         widgets = {
             'customer_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'building_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
@@ -190,7 +190,7 @@ class CustomerEditForm(forms.ModelForm):
             'floor_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'sales_staff': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'routes': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
-            'emirate':forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
+            'district':forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'location': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'mobile_no': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
             'whats_app': forms.TextInput(attrs={'class': 'form-control', 'required': False}),

@@ -100,18 +100,18 @@ DATABASES = {
         
     },
 },
-'old_db': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'sana_water',
-    'USER': 'doadmin',
-    'PASSWORD': config('OLD_DB_PASSWORD'),
-    'HOST': config('OLD_DB_HOST'),
-    'PORT': '25060',
-    # 'OPTIONS': {
-    #     'ssl': {'ca': 'ca-certificate.crt'},
-    # }
+# 'old_db': {
+#     'ENGINE': 'django.db.backends.mysql',
+#     'NAME': 'sana_water',
+#     'USER': 'doadmin',
+#     'PASSWORD': config('OLD_DB_PASSWORD'),
+#     'HOST': config('OLD_DB_HOST'),
+#     'PORT': '25060',
+#     # 'OPTIONS': {
+#     #     'ssl': {'ca': 'ca-certificate.crt'},
+#     # }
     
-}
+# }
 }
 
 CORS_ALLOW_METHODS = [

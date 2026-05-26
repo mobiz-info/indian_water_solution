@@ -35,7 +35,7 @@
                             <thead>
                                 <tr>
                                     <th style="text-align:center !important;width:5%;" scope="col">Sl No</th>
-                                    <th style="text-align:center !important;" scope="col">Emirate</th>
+                                    <th style="text-align:center !important;" scope="col">District</th>
                                     <th style="text-align:center !important;" scope="col">Location</th>
                                     <th style="text-align:center !important;" scope="col">Action</th>
                                 </tr>
@@ -44,7 +44,7 @@
                                 {% for location in location_li %}
                                 <tr>
                                     <td style="text-align:right;">{{ forloop.counter }}</td>
-                                    <td style="text-align:left;">{{ location.emirate }}</td>
+                                    <td style="text-align:left;">{{ location.district }}</td>
                                     <td style="text-align:left;">{{ location.location_name }}</td>
                                     <td>
                                         <div class="g-2">

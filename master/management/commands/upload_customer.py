@@ -10,7 +10,7 @@ from accounts.models import CustomUser, Customers
 from client_management.models import CustodyCustom, CustodyCustomItems, CustomerOutstanding, OutstandingAmount, CustomerOutstandingReport
 from invoice_management.models import Invoice, InvoiceItems
 from master.functions import get_custom_id
-from master.models import BranchMaster, EmirateMaster, LocationMaster, RouteMaster
+from master.models import BranchMaster, DistrictMaster, LocationMaster, RouteMaster
 from product.models import ProdutItemMaster
 from sales_management.models import CollectionPayment
 
@@ -40,7 +40,7 @@ def clean_value(value, default):
 def populate_models_from_excel(data):
     user = CustomUser.objects.get(username="S-08")
     route = RouteMaster.objects.get(route_name="S-08")
-    emirate = EmirateMaster.objects.get(name="Dubai")
+    district = DistrictMaster.objects.get(name="Dubai")
     branch = BranchMaster.objects.get(name="Sana Water")
     # outstanding_in = CustomerOutstanding.objects.filter(customer__sales_staff=user,product_type='amount')
     # Invoice.objects.filter(customer__sales_staff=user).delete()
@@ -119,7 +119,7 @@ def populate_models_from_excel(data):
             sales_staff=user,
             routes=route,
             location=location,
-            emirate=emirate,
+            district=district,
             mobile_no=phone_no,
             gps_latitude="0.0",
             gps_longitude="0.0",

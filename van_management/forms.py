@@ -87,10 +87,10 @@ class Licence_Add_Form(forms.ModelForm):
         super().__init__(*args, **kwargs)
     class Meta:
         model = Van_License
-        fields = ['van', 'emirate','license_no','expiry_date']
+        fields = ['van', 'district','license_no','expiry_date']
         widgets = {
             'van': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': True}),
+            'district': forms.Select(attrs={'class': 'form-control', 'required': True}),
             'license_no': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control','type':'date', 'required': 'true'}),
         }
@@ -99,13 +99,13 @@ class Licence_Add_Form(forms.ModelForm):
 class Licence_Edit_Form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['emirate'].queryset = EmirateMaster.objects.filter()
+        self.fields['district'].queryset = DistrictMaster.objects.filter()
     class Meta:
         model = Van_License
-        fields = ['emirate','expiry_date','license_no']
+        fields = ['district','expiry_date','license_no']
         widgets = {
             
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': True}),
+            'district': forms.Select(attrs={'class': 'form-control', 'required': True}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control','type':'date', 'required': 'true'}),
             'license_no': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
 

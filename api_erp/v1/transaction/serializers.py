@@ -78,7 +78,7 @@ class CustomerTransactionSerializer(serializers.ModelSerializer):
     receipt_date = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     
-    emirate_name = serializers.CharField(source="customer_supply.customer.emirate.name", read_only=True)
+    district_name = serializers.CharField(source="customer_supply.customer.district.name", read_only=True)
     branch_name = serializers.CharField(source="customer_supply.customer.branch_id.name", read_only=True)
     route = serializers.CharField(source="customer_supply.customer.routes.route_name", read_only=True)
 
@@ -87,7 +87,7 @@ class CustomerTransactionSerializer(serializers.ModelSerializer):
         fields = [
             'id','date', 'ref_invoice_no', 'invoice_number', 'product_name', 'sales_type', 'qty', 'amount', 'discount', 
             'net_taxable', 'vat_amount', 'grand_total', 'amount_collected', 'salesman','emp_id', 'van', 'location', 
-            'receipt_no', 'receipt_date', 'status', 'emirate_name', 'branch_name', 'route'
+            'receipt_no', 'receipt_date', 'status', 'district_name', 'branch_name', 'route'
         ]
 
     def get_date(self, obj):
@@ -131,7 +131,7 @@ class CustomerCouponSerializer(serializers.ModelSerializer):
     receipt_date = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     
-    emirate_name = serializers.CharField(source="customer_coupon.customer.emirate.name", read_only=True)
+    district_name = serializers.CharField(source="customer_coupon.customer.district.name", read_only=True)
     branch_name = serializers.CharField(source="customer_coupon.customer.branch_id.name", read_only=True)
     route = serializers.CharField(source="customer_coupon.customer.routes.route_name", read_only=True)
 
@@ -140,7 +140,7 @@ class CustomerCouponSerializer(serializers.ModelSerializer):
         fields = [
             'id','date', 'ref_invoice_no', 'invoice_number', 'product_name', 'sales_type', 'qty', 'amount', 'discount', 
             'net_taxable', 'vat_amount', 'grand_total', 'amount_collected', 'salesman','emp_id', 'van', 'location', 
-            'receipt_no', 'receipt_date', 'status', 'emirate_name', 'branch_name', 'route'
+            'receipt_no', 'receipt_date', 'status', 'district_name', 'branch_name', 'route'
         ]
 
     def get_date(self, obj):
@@ -222,7 +222,7 @@ class SalesSummarySerializer(serializers.ModelSerializer):
 #     receipt_date = serializers.SerializerMethodField()
 #     status = serializers.SerializerMethodField()
     
-#     emirate_name = serializers.CharField(source="customer_supply.customer.emirate.name", read_only=True)
+#     district_name = serializers.CharField(source="customer_supply.customer.district.name", read_only=True)
 #     branch_name = serializers.CharField(source="customer_supply.customer.branch_id.name", read_only=True)
 #     route = serializers.CharField(source="customer_supply.customer.routes.route_name", read_only=True)
 
@@ -231,7 +231,7 @@ class SalesSummarySerializer(serializers.ModelSerializer):
 #         fields = [
 #             'id','date', 'ref_invoice_no', 'invoice_number', 'product_name', 'sales_type', 'qty', 'amount', 'discount', 
 #             'net_taxable', 'vat_amount', 'grand_total', 'amount_collected', 'salesman','emp_id', 'van', 'location', 
-#             'receipt_no', 'receipt_date', 'status', 'emirate_name', 'branch_name', 'route'
+#             'receipt_no', 'receipt_date', 'status', 'district_name', 'branch_name', 'route'
 #         ]
 
 #     def get_date(self, obj):
@@ -344,8 +344,8 @@ class TransactionCusomerSupplySerializer(serializers.ModelSerializer):
     net_taxable = serializers.DecimalField(source='amount_before_vat', max_digits=10, decimal_places=2, read_only=True)
     amount_collected = serializers.DecimalField(source='amount_recieved', max_digits=10, decimal_places=2, read_only=True)
     emp_id = serializers.CharField(source="salesman.pk", read_only=True)
-    emirate_id = serializers.CharField(source="customer.emirate.pk", read_only=True)
-    emirate_name = serializers.CharField(source="customer.emirate.name", read_only=True)
+    district_id = serializers.CharField(source="customer.district.pk", read_only=True)
+    district_name = serializers.CharField(source="customer.district.name", read_only=True)
     branch_name = serializers.CharField(source="salesman.branch_id.branch_name", read_only=True)
     branch_id = serializers.CharField(source="salesman.branch_id.pk", read_only=True)
     route = serializers.CharField(source="customer.routes.route_name", read_only=True)
@@ -363,7 +363,7 @@ class TransactionCusomerSupplySerializer(serializers.ModelSerializer):
         fields = [
             "id",'date',"transaction_type", "customer_id", "custom_id", "customer_name",
             'discount','net_taxable','vat_amount','grand_total','amount_collected','payment_type',
-            "ref_invoice_no","invoice_number","sales_type","emp_id","emirate_id","emirate_name",
+            "ref_invoice_no","invoice_number","sales_type","emp_id","district_id","district_name",
             "branch_name","route","van_id","van_plate",'location_id','location_name','receipt_no','receipt_date','status','products','branch_name','branch_id'
             ]
     
@@ -479,8 +479,8 @@ class TransactionCusomerCouponSerializer(serializers.ModelSerializer):
     amount_collected = serializers.DecimalField(source='amount_recieved', max_digits=10, decimal_places=2, read_only=True)
     
     emp_id = serializers.CharField(source="salesman.pk", read_only=True)
-    emirate_id = serializers.CharField(source="customer.emirate.pk", read_only=True)
-    emirate_name = serializers.CharField(source="customer.emirate.name", read_only=True)
+    district_id = serializers.CharField(source="customer.district.pk", read_only=True)
+    district_name = serializers.CharField(source="customer.district.name", read_only=True)
     branch_name = serializers.CharField(source="salesman.branch_id.branch_name", read_only=True)
     branch_id = serializers.CharField(source="salesman.branch_id.pk", read_only=True)
     route = serializers.CharField(source="customer.routes.route_name", read_only=True)
@@ -501,7 +501,7 @@ class TransactionCusomerCouponSerializer(serializers.ModelSerializer):
         fields = [
             "id",'date',"transaction_type", "customer_id", "custom_id", "customer_name",'payment_type',
             'discount','net_taxable','grand_total','amount_collected',
-            "ref_invoice_no","invoice_number","sales_type","emp_id","emirate_id","emirate_name",
+            "ref_invoice_no","invoice_number","sales_type","emp_id","district_id","district_name",
             "branch_id","branch_name","route","van_id","van_plate",'location_id','location_name','receipt_no','receipt_date','status','products'
             ]
     
@@ -589,8 +589,8 @@ class TransactionCollectionPaymentSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
     transaction_type = serializers.SerializerMethodField()
 
-    emirate_id = serializers.CharField(source="customer.emirate.pk", read_only=True)
-    emirate_name = serializers.CharField(source="customer.emirate.name", read_only=True)
+    district_id = serializers.CharField(source="customer.district.pk", read_only=True)
+    district_name = serializers.CharField(source="customer.district.name", read_only=True)
     branch_name = serializers.CharField(source="salesman.branch_id.branch_name", read_only=True)
     branch_id = serializers.CharField(source="salesman.branch_id.pk", read_only=True)
     route = serializers.CharField(source="customer.routes.route_name", read_only=True)
@@ -603,7 +603,7 @@ class TransactionCollectionPaymentSerializer(serializers.ModelSerializer):
         model = CollectionPayment
         fields = [
             "id",'date',"transaction_type", "customer_id", "custom_id", "customer_name", "collection_date", "amount_collected",
-            "receipt_number", "payment_type", "salesman","emp_id","emirate_id","emirate_name",
+            "receipt_number", "payment_type", "salesman","emp_id","district_id","district_name",
             "branch_id","branch_name","route","van_id","van_plate", "total_amount", "total_discount",'location_id','location_name',
             "total_net_taxable", "total_vat", "collected_amount", "is_repeated_customer", "invoices"
         ]

@@ -897,7 +897,7 @@ def create_customer(request):
                     data = form.save(commit=False)
                     data.created_by = str(request.user)
                     data.created_date = datetime.now()
-                    data.emirate = data.location.emirate
+                    data.district = data.location.district
                     branch_id = request.user.branch_id.branch_id
                     branch = BranchMaster.objects.get(branch_id=branch_id)
                     data.branch_id = branch
@@ -954,11 +954,11 @@ def create_customer(request):
         return render(request, template_name,context)
         
 def load_locations(request):
-    emirate_id = request.GET.get('emirate_id')
-    locations = LocationMaster.objects.filter(emirate__pk=emirate_id).all()
+    district_id = request.GET.get('district_id')
+    locations = LocationMaster.objects.filter(district__pk=district_id).all()
     # log_activity(
     #         created_by=request.user if request.user.is_authenticated else None,
-    #         description=f"Loaded locations for emirate_id {emirate_id}"
+    #         description=f"Loaded locations for district_id {district_id}"
     #     )
     return JsonResponse(list(locations.values('location_id', 'location_name')), safe=False)
 
@@ -1033,7 +1033,7 @@ def edit_customer(request,pk):
             if form.is_valid():
                 # print("previous_rate",previous_rate)
                 data = form.save(commit=False)
-                data.emirate = data.location.emirate
+                data.district = data.location.district
                 data.save()
                 
                 if not data.user_id:

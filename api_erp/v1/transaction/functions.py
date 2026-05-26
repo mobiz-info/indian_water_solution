@@ -39,7 +39,7 @@ def get_sales_data(customer_pk=None, start_date=None, end_date=None):
             "trX_TIME": supply.supply_date.strftime("%d-%m-%Y %H:%M"),
             "trX_TYPE": supply.customer.sales_type,
             "brancH_NAME": supply.customer.branch_id.name if supply.customer.branch_id else "N/A",
-            "city": supply.customer.emirate.name if supply.customer.emirate else "N/A",
+            "city": supply.customer.district.name if supply.customer.district else "N/A",
             "locatioN_NAME": supply.customer.location.location_name if supply.customer.location else "N/A",
             "vehiclE_NUMBER": van.plate if van else "N/A",
             "routE_NAME": supply.customer.routes.route_name if supply.customer.routes else "N/A",

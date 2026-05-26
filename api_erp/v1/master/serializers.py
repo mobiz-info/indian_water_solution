@@ -29,7 +29,7 @@ class BranchMasterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BranchMaster
-        fields = ['branch_id','name','address','mobile','landline','phone','fax','trn','website','emirate','email','user_id','logo']
+        fields = ['branch_id','name','address','mobile','landline','phone','fax','trn','website','district','email','user_id','logo']
         
     
 class BranchSerializer(serializers.ModelSerializer):
@@ -37,16 +37,16 @@ class BranchSerializer(serializers.ModelSerializer):
         model = BranchExportStatus
         fields = ['branch', 'erp_branch_id']
                
-class EmirateMasterSerializer(serializers.ModelSerializer):
+class DistrictMasterSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = EmirateMaster
-        fields = ['emirate_id','name']
+        model = DistrictMaster
+        fields = ['district_id','name']
 
-class EmirateSerializer(serializers.ModelSerializer):
+class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EmirateExportStatus
-        fields = ['emirate', 'erp_emirate_id']        
+        model = DistrictExportStatus
+        fields = ['district', 'erp_district_id']        
         
 class DesignationMasterSerializer(serializers.ModelSerializer):
     
@@ -60,15 +60,15 @@ class DesignationSerializer(serializers.ModelSerializer):
         fields = ['designation', 'erp_designation_id']  
         
 class LocationMasterSerializer(serializers.ModelSerializer):
-    emirate_name = serializers.SerializerMethodField()
-    emirate_id = serializers.PrimaryKeyRelatedField(source='emirate', read_only=True)
+    district_name = serializers.SerializerMethodField()
+    district_id = serializers.PrimaryKeyRelatedField(source='district', read_only=True)
     
     class Meta:
         model = LocationMaster
-        fields = ['location_id','location_name','emirate_name','emirate_id']
+        fields = ['location_id','location_name','district_name','district_id']
         
-    def get_emirate_name(self, obj):
-        return obj.emirate.name if obj.emirate else None
+    def get_district_name(self, obj):
+        return obj.district.name if obj.district else None
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -86,7 +86,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'id', 'username', 'route_name', 'salesman', 'staff_id', 'full_name', 'email', 'user_type', 'branch_id', 'designation_id', 
             'phone', 'blood_group', 'permanent_address', 'present_address', 'labour_card_no', 
             'labour_card_expiry', 'driving_licence_no', 'driving_licence_expiry', 'licence_issued_by', 
-            'visa_issued_by', 'visa_no', 'visa_expiry', 'emirates_id_no', 'emirates_expiry', 
+            'visa_issued_by', 'visa_no', 'visa_expiry', 'districts_id_no', 'districts_expiry', 
             'health_card_no', 'health_card_expiry', 'base_salary', 'wps_percentage', 'wps_ref_no', 
             'insurance_no', 'insurance_expiry', 'insurance_company', 'user_management', 
             'product_management', 'masters', 'van_management', 'coupon_management', 
@@ -117,14 +117,14 @@ class CustomUserListSerializer(serializers.ModelSerializer):
 class CustomersSerializer(serializers.ModelSerializer):
     routes_name = serializers.SerializerMethodField()
     location_name = serializers.SerializerMethodField()
-    emirate_name = serializers.SerializerMethodField()
+    district_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Customers
         fields = [
             'customer_id', 'custom_id', 'customer_name', 'building_name', 'door_house_no',
             'mobile_no', 'email_id', 'routes_name', 'sales_type',
-            'no_of_bottles_required', 'emirate_name', 'location_name'
+            'no_of_bottles_required', 'district_name', 'location_name'
         ]
 
     def get_routes_name(self, obj):
@@ -133,8 +133,8 @@ class CustomersSerializer(serializers.ModelSerializer):
     def get_location_name(self, obj):
         return obj.location.location_name if obj.location else None
 
-    def get_emirate_name(self, obj):
-        return obj.emirate.name if obj.emirate else None
+    def get_district_name(self, obj):
+        return obj.district.name if obj.district else None
    
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:

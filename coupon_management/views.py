@@ -23,7 +23,7 @@ from .forms import  *
 from accounts.models import CustomUser, Customers
 from invoice_management.models import Invoice, InvoiceItems, InvoiceDailyCollection
 from sales_management.models import *
-from master.models import EmirateMaster, BranchMaster, RouteMaster
+from master.models import DistrictMaster, BranchMaster, RouteMaster
 import json
 from django.core.serializers import serialize
 from django.views import View

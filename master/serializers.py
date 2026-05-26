@@ -42,22 +42,22 @@ class CategoryMasterSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class EmirateMasterSerializers(serializers.ModelSerializer):
+class DistrictMasterSerializers(serializers.ModelSerializer):
     class Meta :
-        model = EmirateMaster
+        model = DistrictMaster
         fields = '__all__'
         
         
-class EmiratesBasedLocationsSerializers(serializers.ModelSerializer):
+class DistrictsBasedLocationsSerializers(serializers.ModelSerializer):
     locations = serializers.SerializerMethodField()
     class Meta :
-        model = EmirateMaster
-        fields = ['emirate_id','name','locations']
+        model = DistrictMaster
+        fields = ['district_id','name','locations']
         
     def get_locations(self,obj):
         branch_id = self.context.get('branch_id')
         
-        instances = LocationMaster.objects.filter(emirate=obj)
+        instances = LocationMaster.objects.filter(district=obj)
         if branch_id:
             instances = instances.filter(branch_id__pk=branch_id)
         return LocationMasterSerializers(instances, many=True).data

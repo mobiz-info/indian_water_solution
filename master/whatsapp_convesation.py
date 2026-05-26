@@ -11,7 +11,7 @@ from accounts.models import CustomerComplaints, GuestCustomerOrder
 from customer_care.models import DiffBottlesModel
 from master.functions import get_custom_id
 from product.models import ProdutItemMaster
-from .models import EmirateMaster, LocationMaster, WhatsappData, WhatsappResponse, Customers
+from .models import DistrictMaster, LocationMaster, WhatsappData, WhatsappResponse, Customers
 
 # ============================================================
 # Dictionary of responses for different commands in all languages
@@ -312,7 +312,7 @@ def water_order_handler(request):
             "🆕 If you are a new customer, please reply with: New Customer"
             # "👋 Welcome to Sana Pure Drinking Water!\n\n"
             # "You are not registered in our system. Please share your details in this format:\n\n"
-            # "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <Emirate>\n\n"
+            # "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <District>\n\n"
             # "Example:\nNEW John, Palm Tower, A-102, 10th, Marina, Dubai"
         )
 
@@ -356,7 +356,7 @@ def water_order_handler(request):
                 "🆕 If you are a new customer, please reply with: New Customer"
                 # "👋 Welcome to Sana Pure Drinking Water!\n\n"
                 # "You are not registered in our system. Please share your details in this format:\n\n"
-                # "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <Emirate>\n\n"
+                # "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <District>\n\n"
                 # "Example:\nNEW John, Palm Tower, A-102, 10th, Marina, Dubai"
             )
 
@@ -446,7 +446,7 @@ def water_order_handler(request):
             "🏠 Building Name / Villa No -\n"
             "🚪 Apartment Number -\n"
             "📍 Area -\n"
-            "🕌 Emirate -\n\n"
+            "🕌 District -\n\n"
             "📌 Also, kindly share your location 🗺️ for faster delivery."
         )
         
@@ -466,7 +466,7 @@ def water_order_handler(request):
                 door_house_no = details.get("🚪 Apartment Number", ""),
                 floor_no = "",  # not in new form, keep blank
                 location = LocationMaster.objects.get(location_name__iexact=details.get("📍 Area", "")),
-                emirate = EmirateMaster.objects.get(name__iexact=details.get("🕌 Emirate", "")),
+                district = DistrictMaster.objects.get(name__iexact=details.get("🕌 District", "")),
                 mobile_no = details.get("📱 Mobile Number", number),
                 whats_app = number,
                 is_guest = True
@@ -529,14 +529,14 @@ def water_order_handler(request):
     #     pattern = r'^([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*(.+)$'
     #     match = re.match(pattern, details, re.IGNORECASE)
     #     if match:
-    #         name, building, house_no, floor, location, emirate = match.groups()
+    #         name, building, house_no, floor, location, district = match.groups()
     #         customer = Customers.objects.create(
     #             customer_name = name.strip(),
     #             building_name = building.strip(),
     #             door_house_no = house_no.strip(),
     #             floor_no = floor.strip(),
     #             location = LocationMaster.objects.get(location_name__iexact=location.strip()),
-    #             emirate = EmirateMaster.objects.get(name__iexact=emirate.strip()),
+    #             district = DistrictMaster.objects.get(name__iexact=district.strip()),
     #             mobile_no = number,
     #             whats_app = number,
     #             is_guest = True

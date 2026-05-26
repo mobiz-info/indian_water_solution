@@ -20,7 +20,7 @@ from rest_framework.decorators import api_view, permission_classes, renderer_cla
 
 from itertools import chain
 
-from master.models import BranchMaster, DesignationMaster, EmirateMaster, LocationMaster, RouteMaster
+from master.models import BranchMaster, DesignationMaster, DistrictMaster, LocationMaster, RouteMaster
 from accounts.models import CustomUser, Customers
 from client_management.models import *
 from van_management.models import *

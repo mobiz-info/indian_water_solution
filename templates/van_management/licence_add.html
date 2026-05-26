@@ -45,12 +45,12 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group required">
-                                    <label class='control-label'>Emirate</label>
-                                    <select class="form-select" id="emirate" name="emirate" required>
+                                    <label class='control-label'>District</label>
+                                    <select class="form-select" id="district" name="district" required>
                                         <option value=""></option>
-                                        <!-- Loop through emirate_values and populate options -->
-                                        {% for emirate in emirate_values %}
-                                        <option value="{{ emirate.emirate_id }}">{{ emirate.name }}</option>
+                                        <!-- Loop through district_values and populate options -->
+                                        {% for district in district_values %}
+                                        <option value="{{ district.district_id }}">{{ district.name }}</option>
                                         {% endfor %}
                                     </select> 
                                     <!--                                <small class="form-text text-muted">Select Category.</small>-->

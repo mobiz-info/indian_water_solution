@@ -2712,7 +2712,7 @@ class CustomerRegistrationRequestSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'phone_no', 'building_name', 'room_or_flat_no',
             'floor_no', 'email_id', 'no_of_5g_bottles_required', 
-            'visit_schedule', 'location', 'emirate', 'status'
+            'visit_schedule', 'location', 'district', 'status'
         ]
         read_only_fields = ['id', 'status']
 
@@ -2756,7 +2756,7 @@ class LeadCustomersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LeadCustomers
-        fields = ['id','name','mobile_no','address','next_following_date','status','customer_type','routes','emirate','location','created_date']
+        fields = ['id','name','mobile_no','address','next_following_date','status','customer_type','routes','district','location','created_date']
         read_only_fields = ['id','created_date','status']
         
     def get_status(self,obj):
@@ -2809,7 +2809,7 @@ class CustomerRequestSerializer(serializers.ModelSerializer):
                 customer.door_house_no,
                 customer.floor_no,
                 customer.location.location_name if customer.location else None,
-                customer.emirate.name if customer.emirate else None
+                customer.district.name if customer.district else None
             ])
             return ", ".join(address_parts)
         return None
@@ -2881,7 +2881,7 @@ class SalesmanCustomerRequestSerializer(serializers.ModelSerializer):
                 customer.door_house_no,
                 customer.floor_no,
                 customer.location.location_name if customer.location else None,
-                customer.emirate.name if customer.emirate else None
+                customer.district.name if customer.district else None
             ])
             return ", ".join(address_parts)
         return None

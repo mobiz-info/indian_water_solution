@@ -45,8 +45,8 @@ urlpatterns = [
     path('category/<str:id>/',CategoryMaster_API.as_view()),
     path('category/',CategoryMaster_API.as_view()),
 
-    path('emirates/<str:id>/',EmirateMaster_API.as_view()),
-    path('emirates/',EmirateMaster_API.as_view()),
+    path('districts/<str:id>/',DistrictMaster_API.as_view()),
+    path('districts/',DistrictMaster_API.as_view()),
 
     ###################Product Url#######################
 
@@ -91,8 +91,8 @@ urlpatterns = [
     # Staff punch in and punch out
     path('staff_punch_in_api/', PunchIn_Api.as_view(), name='staff_punch_in_api'),
     path('staff_punch_out_api/', PunchOut_Api.as_view(), name='staff_punch_out_api'),
-    path('location_emirates/', location_based_on_emirates, name='location-based-on-emirates'),
-    path('emirates-based-locations/', emirates_based_locations, name='emirates_based_locations'),
+    path('location_districts/', location_based_on_districts, name='location-based-on-districts'),
+    path('districts-based-locations/', districts_based_locations, name='districts_based_locations'),
     path('staff_assigned_routes/',Route_Assign_Staff_Api.as_view(), name='staff_assigned_routes'),
     path('create/customer/',Customer_API.as_view()),
     path('create/customer/<str:id>/',Customer_API.as_view()),

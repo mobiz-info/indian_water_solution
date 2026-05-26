@@ -115,7 +115,7 @@ class Van_License(models.Model):
     modified_by = models.CharField(max_length=20, null=True, blank=True)
     modified_date = models.DateTimeField(blank=True, null=True)
     van = models.ForeignKey(Van, on_delete=models.CASCADE, null=True, blank=True,related_name='van_license')
-    emirate = models.ForeignKey(EmirateMaster, on_delete=models.SET_NULL, null=True, blank=True,related_name='license_emirate')
+    district = models.ForeignKey(DistrictMaster, on_delete=models.SET_NULL, null=True, blank=True,related_name='license_district')
     license_no = models.CharField(max_length=50, null=True, blank=True)
     expiry_date = models.DateTimeField(blank=True, null=True)
 

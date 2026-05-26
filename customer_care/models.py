@@ -158,7 +158,7 @@ class CustomerRegistrationRequest(models.Model):
     status = models.CharField(max_length=50,default="requested",choices=CUSTOMER_REQUEST_CHOICES)
     
     location = models.ForeignKey('master.LocationMaster', on_delete=models.CASCADE)
-    emirate = models.ForeignKey('master.EmirateMaster', on_delete=models.CASCADE)
+    district = models.ForeignKey('master.DistrictMaster', on_delete=models.CASCADE)
     
     created_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.CharField(max_length=20, null=True, blank=True)

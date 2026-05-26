@@ -9,8 +9,8 @@ from ckeditor.fields import RichTextField
 
 from accounts.models import Customers
 
-class EmirateMaster(models.Model):
-    emirate_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class DistrictMaster(models.Model):
+    district_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_by = models.CharField(max_length=20, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True, editable=False, null=True, blank=True)
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -22,16 +22,16 @@ class EmirateMaster(models.Model):
     def __str__(self):
         return str(self.name)
 
-class EmirateExportStatus(models.Model):
-    emirate = models.ForeignKey(EmirateMaster, on_delete=models.CASCADE, related_name='emirate_export_status')
-    erp_emirate_id = models.CharField(max_length=50, unique=True)
+class DistrictExportStatus(models.Model):
+    district = models.ForeignKey(DistrictMaster, on_delete=models.CASCADE, related_name='district_export_status')
+    erp_district_id = models.CharField(max_length=50, unique=True)
     exported_date = models.DateTimeField(auto_now_add=True) 
      
     class Meta:
         ordering = ('-exported_date',)
 
     def __str__(self):
-        return f"Exported {self.emirate.name} with ERP ID {self.erp_emirate_id}"
+        return f"Exported {self.district.name} with ERP ID {self.erp_district_id}"
     
     
 class BranchMaster(models.Model):
@@ -48,7 +48,7 @@ class BranchMaster(models.Model):
     fax = models.CharField(max_length=50, null=True, blank=True)
     trn = models.CharField(max_length=50, null=True, blank=True)
     website = models.CharField(max_length=50, null=True, blank=True)
-    emirate = models.ForeignKey(EmirateMaster, on_delete=models.SET_NULL, null=True, blank=False)
+    district = models.ForeignKey(DistrictMaster, on_delete=models.SET_NULL, null=True, blank=False)
     email = models.CharField(max_length=30, null=True, blank=True)
     user_id = models.ForeignKey('accounts.CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
     logo = models.ImageField(null=True, blank=True, upload_to='master')
@@ -138,7 +138,7 @@ class LocationMaster(models.Model):
     modified_by = models.CharField(max_length=20, null=True, blank=True)
     modified_date = models.DateTimeField(blank=True, null=True)
     location_name = models.CharField(max_length=50)
-    emirate = models.ForeignKey(EmirateMaster, on_delete=models.SET_NULL, null=True, blank=False)
+    district = models.ForeignKey(DistrictMaster, on_delete=models.SET_NULL, null=True, blank=False)
     branch_id = models.ForeignKey('master.BranchMaster', on_delete=models.SET_NULL, null=True, blank=True,related_name='loc_branch')
     is_exported = models.BooleanField(default=False)
     

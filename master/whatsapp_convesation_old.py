@@ -8,7 +8,7 @@ from accounts.models import CustomerComplaints, GuestCustomerOrder
 from customer_care.models import DiffBottlesModel
 from master.functions import get_custom_id
 from product.models import ProdutItemMaster
-from .models import EmirateMaster, LocationMaster, WhatsappData, WhatsappResponse, Customers
+from .models import DistrictMaster, LocationMaster, WhatsappData, WhatsappResponse, Customers
 
 # ============================================================
 # Dictionary of responses for different commands in all languages
@@ -358,13 +358,13 @@ def send_interactive_whatsapp(to_number, lang="EN", customer_name=None):
 #         pattern = r'^([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*(.+)$'
 #         match = re.match(pattern, details, re.IGNORECASE)
 #         if match:
-#             name, building, house_no, floor, location, emirate = match.groups()
+#             name, building, house_no, floor, location, district = match.groups()
 #             customer.customer_name = name.strip()
 #             customer.building_name = building.strip()
 #             customer.door_house_no = house_no.strip()
 #             customer.floor_no = floor.strip()
 #             customer.location = LocationMaster.objects.get(location_name__exact=location.strip())
-#             customer.emirate = EmirateMaster.objects.get(name__exact=emirate.strip())
+#             customer.district = DistrictMaster.objects.get(name__exact=district.strip())
 #             customer.is_guest = False
 #             customer.save()
 #             reply = f"✅ Welcome {customer.customer_name}! You are now registered.\nSend ORDER WATER to place an order."
@@ -429,7 +429,7 @@ def water_order_handler(request):
         reply = (
                 "👋 Welcome to Sana Pure Drinking Water!\n\n"
                 "You are not registered in our system. Please share your details in this format:\n\n"
-                "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <Emirate>\n\n"
+                "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <District>\n\n"
                 "Example:\nNEW John, Palm Tower, A-102, 10th, Marina, Dubai"
             )
         
@@ -478,7 +478,7 @@ def water_order_handler(request):
             reply = (
                 "👋 Welcome to Sana Pure Drinking Water!\n\n"
                 "You are not registered in our system. Please share your details in this format:\n\n"
-                "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <Emirate>\n\n"
+                "NEW <Name>, <Building>, <House No>, <Floor>, <Location>, <District>\n\n"
                 "Example:\nNEW John, Palm Tower, A-102, 10th, Marina, Dubai"
             )
 
@@ -665,13 +665,13 @@ def water_order_handler(request):
         match = re.match(pattern, details, re.IGNORECASE)
 
         if match:
-            name, building, house_no, floor, location, emirate = match.groups()
+            name, building, house_no, floor, location, district = match.groups()
             customer.customer_name = name.strip()
             customer.building_name = building.strip()
             customer.door_house_no = house_no.strip()
             customer.floor_no = floor.strip()
             customer.location = LocationMaster.objects.get(location_name__iexact=location.strip())
-            customer.emirate = EmirateMaster.objects.get(name__iexact=emirate.strip())
+            customer.district = DistrictMaster.objects.get(name__iexact=district.strip())
             customer.is_guest = True   # ✅ keep guest until approved
             customer.save()
 

@@ -70,9 +70,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group required">
-                                    <label class='control-label'>Emirate</label>
-                                    {{ form.emirate }}
-                                    <span style="color: red;">{{ form.emirate.errors }}</span>
+                                    <label class='control-label'>District</label>
+                                    {{ form.district }}
+                                    <span style="color: red;">{{ form.district.errors }}</span>
                                     <!--                                <small class="form-text text-muted">Select Category.</small>-->
                                 </div>
                             </div>
@@ -263,12 +263,12 @@
         // Disable the #id_location element initially
         $("#id_location").prop('disabled', true);
 
-        $("#id_emirate").change(function() {
+        $("#id_district").change(function() {
             var url = "{% url 'load_locations' %}"; 
-            var emirateId = $(this).val(); 
+            var districtId = $(this).val(); 
             $.ajax({
                 url: url,
-                data: {'emirate_id': emirateId},
+                data: {'district_id': districtId},
                 success: function(data) {
                     // Clear the #id_location element
                     $("#id_location").html('');

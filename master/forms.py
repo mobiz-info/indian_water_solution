@@ -7,10 +7,10 @@ from ckeditor.widgets import CKEditorWidget
 class Branch_Create_Form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['emirate'].queryset = EmirateMaster.objects.filter()
+        self.fields['district'].queryset = DistrictMaster.objects.filter()
     class Meta:
         model = BranchMaster
-        fields = ['name', 'address', 'mobile', 'phone', 'fax','website','email','logo','emirate','landline','trn']
+        fields = ['name', 'address', 'mobile', 'phone', 'fax','website','email','logo','district','landline','trn']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
@@ -20,19 +20,19 @@ class Branch_Create_Form(forms.ModelForm):
             'website': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'required': 'true'}),
             'logo': forms.FileInput(attrs={'class': 'form-control'}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
+            'district': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'landline': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'trn': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
         }
 
 class Branch_Edit_Form(forms.ModelForm):
-    emirate = forms.ModelChoiceField(
-        queryset=EmirateMaster.objects.all(),
+    district = forms.ModelChoiceField(
+        queryset=DistrictMaster.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control', 'required': 'true'})
     )
     class Meta:
         model = BranchMaster
-        fields = ['name', 'address', 'mobile', 'phone', 'fax','website','email','logo','emirate','landline','trn']
+        fields = ['name', 'address', 'mobile', 'phone', 'fax','website','email','logo','district','landline','trn']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
@@ -136,10 +136,10 @@ class Location_Add_Form(forms.ModelForm):
         super().__init__(*args, **kwargs)
     class Meta:
         model = LocationMaster
-        fields = ['location_name', 'emirate']
+        fields = ['location_name', 'district']
         widgets = {
             'location_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': True})
+            'district': forms.Select(attrs={'class': 'form-control', 'required': True})
         }
 
 
@@ -149,10 +149,10 @@ class Location_Edit_Form(forms.ModelForm):
         # self.fields['area'].queryset = Area.objects.filter(is_dlt=False)
     class Meta:
         model = LocationMaster
-        fields = ['location_name', 'emirate']
+        fields = ['location_name', 'district']
         widgets = {
             'location_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': True})
+            'district': forms.Select(attrs={'class': 'form-control', 'required': True})
         }
     
     class Location_Add_Form(forms.ModelForm):
@@ -160,10 +160,10 @@ class Location_Edit_Form(forms.ModelForm):
         super().__init__(*args, **kwargs)
     class Meta:
         model = LocationMaster
-        fields = ['location_name', 'emirate']
+        fields = ['location_name', 'district']
         widgets = {
             'location_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': True})
+            'district': forms.Select(attrs={'class': 'form-control', 'required': True})
         }
 
 
@@ -173,10 +173,10 @@ class Location_Edit_Form(forms.ModelForm):
         # self.fields['area'].queryset = Area.objects.filter(is_dlt=False)
     class Meta:
         model = LocationMaster
-        fields = ['location_name', 'emirate']
+        fields = ['location_name', 'district']
         widgets = {
             'location_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': True})
+            'district': forms.Select(attrs={'class': 'form-control', 'required': True})
         }
 
 class Category_Create_Form(forms.ModelForm):

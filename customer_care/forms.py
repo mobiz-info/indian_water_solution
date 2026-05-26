@@ -254,7 +254,7 @@ class CustomerForm(forms.ModelForm):
         model = Customers
         fields = [
             'customer_name', 'building_name', 'door_house_no', 'floor_no',
-            'sales_staff', 'routes','emirate', 'location', 'mobile_no', 'whats_app',
+            'sales_staff', 'routes','district', 'location', 'mobile_no', 'whats_app',
             'email_id', 'gps_latitude', 'gps_longitude', 'customer_type','five_g_count_limit','eligible_foc','rate',
             'sales_type', 'no_of_bottles_required', 'max_credit_limit',
             'credit_days', 'no_of_permitted_invoices','is_active','is_calling_customer','gps_module_active'
@@ -266,7 +266,7 @@ class CustomerForm(forms.ModelForm):
             'floor_no': forms.TextInput(attrs={'class': 'form-control', 'required': 'false'}),
             'sales_staff': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'routes': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
-            'emirate': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
+            'district': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'location': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'mobile_no': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'whats_app': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),

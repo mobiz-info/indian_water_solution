@@ -555,19 +555,19 @@ class CategoryMaster_API(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class EmirateMaster_API(APIView):
-    serializer_class = EmirateMasterSerializers
+class DistrictMaster_API(APIView):
+    serializer_class = DistrictMasterSerializers
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self,request,id=None):
         try:
             if id :
-                queryset=EmirateMaster.objects.get(emirate_id=id)
-                serializer=EmirateMasterSerializers(queryset)
+                queryset=DistrictMaster.objects.get(district_id=id)
+                serializer=DistrictMasterSerializers(queryset)
                 return Response(serializer.data)
-            queryset=EmirateMaster.objects.all()
-            serializer=EmirateMasterSerializers(queryset,many=True)
+            queryset=DistrictMaster.objects.all()
+            serializer=DistrictMasterSerializers(queryset,many=True)
             return Response(serializer.data)
         except  Exception as e:
             print(e)
@@ -575,12 +575,12 @@ class EmirateMaster_API(APIView):
 
     def post(self,request):
         try:
-            serializer=EmirateMasterSerializers(data=request.data)
+            serializer=DistrictMasterSerializers(data=request.data)
             if serializer.is_valid():
-                emirate = serializer.save(created_by=request.user.id)
+                district = serializer.save(created_by=request.user.id)
                 # log_activity(
                 #     created_by=request.user,
-                #     description=f"Emirate '{emirate.name}' was created by {request.user.username}."
+                #     description=f"District '{district.name}' was created by {request.user.username}."
                 # )
                 data = {'data': 'successfully added'}
                 return Response(data,status=status.HTTP_201_CREATED)
@@ -591,13 +591,13 @@ class EmirateMaster_API(APIView):
 
     def put(self, request, id):
         try:
-            category = EmirateMaster.objects.get(emirate_id=id)
-            serializer = EmirateMasterSerializers(category, data=request.data)
+            category = DistrictMaster.objects.get(district_id=id)
+            serializer = DistrictMasterSerializers(category, data=request.data)
             if serializer.is_valid():
-                updated_emirate = serializer.save()
+                updated_district = serializer.save()
                 # log_activity(
                 #     created_by=request.user,
-                #     description=f"Emirate '{updated_emirate.name}' was updated by {request.user.username}."
+                #     description=f"District '{updated_district.name}' was updated by {request.user.username}."
                 # )
                 return Response(serializer.data,status=status.HTTP_200_OK)
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -608,15 +608,15 @@ class EmirateMaster_API(APIView):
     def delete(self, request, id):
         try:
             # Retrieve the object to be deleted
-            instance = EmirateMaster.objects.get(emirate_id=id)
-            emirate_name = instance.name  
+            instance = DistrictMaster.objects.get(district_id=id)
+            district_name = instance.name  
             instance.delete()
             # log_activity(
             #     created_by=request.user,
-            #     description=f"Emirate '{emirate_name}' was deleted by {request.user.username}."
+            #     description=f"District '{district_name}' was deleted by {request.user.username}."
             # )
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except EmirateMaster.DoesNotExist:
+        except DistrictMaster.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
@@ -883,15 +883,15 @@ class Licence_API(APIView):
         van_data = Van.objects.get(van_id = request.data['van'])
         serializer=Van_LicenseSerializers(data=request.data)
         if serializer.is_valid():
-            licence_exists = Van_License.objects.filter(van = van_data,emirate = request.data['emirate']).exists()
+            licence_exists = Van_License.objects.filter(van = van_data,district = request.data['district']).exists()
             if licence_exists:
-                data = {'data':'Licence is already assigned to this van from this emirate'}
+                data = {'data':'Licence is already assigned to this van from this district'}
                 return Response(data,status=status.HTTP_200_OK)
             else :
                 van_data = serializer.save(created_by=request.user.id)
                 # log_activity(
                 #     created_by=request.user.id,
-                #     description=f"Licence created for van '{van_data.van.van_make}' from emirate '{request.data['emirate']}'."
+                #     description=f"Licence created for van '{van_data.van.van_make}' from district '{request.data['district']}'."
                 #     )
                 data = {'data':'Licence is created'}
                 return Response(data,status=status.HTTP_200_OK)
@@ -902,12 +902,12 @@ class Licence_API(APIView):
         try:
             # Retrieve the object to be deleted
             instance = Van_License.objects.get(van_route_id=id)
-            instance_name = instance.emirate.name 
+            instance_name = instance.district.name 
             instance.delete()
 
             # log_activity(
             #     created_by=request.user.id,
-            #     description=f"Licence for emirate '{instance_name}' deleted."
+            #     description=f"Licence for district '{instance_name}' deleted."
             # )
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Van_License.DoesNotExist:
@@ -2130,26 +2130,26 @@ class PunchOut_Api(APIView):
 #----------------------------------------Customer --------------------------------------------#
 
 @api_view(['GET'])
-def location_based_on_emirates(request):
-    emirate = request.query_params.get('emirate', None)
-    if emirate is None:
-        return Response({'error': 'Emirate parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
-    location_list = LocationMaster.objects.filter(emirate=emirate).all()
+def location_based_on_districts(request):
+    district = request.query_params.get('district', None)
+    if district is None:
+        return Response({'error': 'District parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+    location_list = LocationMaster.objects.filter(district=district).all()
     locations = LocationMasterSerializers(location_list, many=True).data
     # log_activity(
     #     created_by=request.user.id,
-    #     description=f"Retrieved locations for emirate: {emirate}"
+    #     description=f"Retrieved locations for district: {district}"
     # )
     return Response({'locations': locations})
 
 @api_view(['GET'])
-def emirates_based_locations(request):
+def districts_based_locations(request):
     branch_id = ""
     if request.GET.get('branch_id'):
         branch_id = request.GET.get('branch_id')
         
-    instances = EmirateMaster.objects.all()
-    serialized_data = EmiratesBasedLocationsSerializers(instances, many=True, context={'branch_id': branch_id}).data
+    instances = DistrictMaster.objects.all()
+    serialized_data = DistrictsBasedLocationsSerializers(instances, many=True, context={'branch_id': branch_id}).data
     
     # log_activity(
     #     created_by=request.user.id,

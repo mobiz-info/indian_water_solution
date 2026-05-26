@@ -10,8 +10,8 @@ urlpatterns = [
     re_path(r'^branch/$', views.branch),
     re_path(r'^sync-erp-branch/$', views.sync_erp_branch),
     
-    re_path(r'^emirate/$', views.emirate),
-    re_path(r'^sync-erp-emirate/$', views.sync_erp_emirate),
+    re_path(r'^district/$', views.district),
+    re_path(r'^sync-erp-district/$', views.sync_erp_district),
     
     re_path(r'^designation/$', views.designation),
     re_path(r'^sync-erp-designation/$', views.sync_erp_designation),

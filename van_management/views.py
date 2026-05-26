@@ -7,7 +7,7 @@ from coupon_management.serializers import couponStockSerializers
 from master.functions import generate_form_errors
 from .models import Van, Van_Routes, Van_License, BottleAllocation, StockMovementProducts
 from accounts.models import CustomUser, Customers
-from master.models import EmirateMaster, RouteMaster
+from master.models import DistrictMaster, RouteMaster
 from customer_care.models import DiffBottlesModel
 from client_management.models import *
 from sales_management.models import *
@@ -342,43 +342,43 @@ class Licence_List(View):
     template_name = 'van_management/licence_list.html'
     
     def get(self, request, *args, **kwargs):
-        emirates = EmirateMaster.objects.all().order_by('emirate_id')
+        districts = DistrictMaster.objects.all().order_by('district_id')
         licenses = Van_License.objects.all()
         vans = {}
-        emirate_names = [emirate.name for emirate in emirates]  # List to store emirate names dynamically
+        district_names = [district.name for district in districts]  # List to store district names dynamically
         license_list = []
         # for license in licenses:
         #     van_plate = license.van.plate
-        #     emirate_name = license.emirate.name
-        #     emirate_id = license.emirate.emirate_id
+        #     district_name = license.district.name
+        #     district_id = license.district.district_id
         #     expiry_date = license.expiry_date
         
         # for license in licenses:
         #     lic= {'license_id':license.van_license_id,'van_plate':license.van.plate,
-        #            'emirate_name':license.emirate,"expiry_date":license.expiry_date}
+        #            'district_name':license.district,"expiry_date":license.expiry_date}
         #     license_list.append(lic)
 
         #     if van_plate not in vans:
-        #         vans[van_plate] = {emirate: None for emirate in emirate_names}
-        #     vans[van_plate][emirate_name] = expiry_date
+        #         vans[van_plate] = {district: None for district in district_names}
+        #     vans[van_plate][district_name] = expiry_date
         
         for license in licenses:
             if license.van:
                 van_plate = license.van.plate
-                emirate_name = license.emirate.name
-                emirate_id = license.emirate.emirate_id
+                district_name = license.district.name
+                district_id = license.district.district_id
                 expiry_date = license.expiry_date
             
             
                 lic= {'license_id':license.van_license_id,'van_plate':license.van.plate,
-                    'emirate_name':license.emirate,"expiry_date":license.expiry_date}
+                    'district_name':license.district,"expiry_date":license.expiry_date}
                 license_list.append(lic)
 
                 if van_plate not in vans:
-                    vans[van_plate] = {emirate: None for emirate in emirate_names}
-                vans[van_plate][emirate_name] = expiry_date
+                    vans[van_plate] = {district: None for district in district_names}
+                vans[van_plate][district_name] = expiry_date
         
-        return render(request, self.template_name, {'vans': vans, 'emirate_names': emirate_names,'license_list':license_list})
+        return render(request, self.template_name, {'vans': vans, 'district_names': district_names,'license_list':license_list})
    
     
 
@@ -387,9 +387,9 @@ class Licence_Adding(View):
     form_class = Licence_Add_Form
 
     def get(self, request, *args, **kwargs):
-        emirate_values = EmirateMaster.objects.all()
+        district_values = DistrictMaster.objects.all()
         van = Van.objects.all()
-        context = {'emirate_values': emirate_values, 'vans': van}
+        context = {'district_values': district_values, 'vans': van}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -398,14 +398,14 @@ class Licence_Adding(View):
             data = form.save(commit = False )
             van_id = request.POST.get('van')
             license_no = request.POST.get('licence_no')
-            emirate_id = request.POST.get('emirate')
+            district_id = request.POST.get('district')
             expiry_date = request.POST.get('expiry_date')
             van = Van.objects.get(van_id = van_id)
-            emirate = EmirateMaster.objects.get(pk = emirate_id)
+            district = DistrictMaster.objects.get(pk = district_id)
             data.created_by = str(request.user.id)
             data.license_no = license_no
             data.van = van
-            data.emirate = emirate
+            data.district = district
             data.expiry_date = expiry_date
             data.save()
             messages.success(request, 'Licence Successfully Added.', 'alert-success')
@@ -444,18 +444,18 @@ def licence_edit(request, plate):
     van = get_object_or_404(Van, plate=plate)
     van_id = van.van_id
     van_licence = Van_License.objects.filter(van=van)
-    emirate = EmirateMaster.objects.all()
+    district = DistrictMaster.objects.all()
     if request.method == 'POST':
-        emirate_id = request.POST.get('emirate')
+        district_id = request.POST.get('district')
         expiry_date = request.POST.get('expiry_date')
-        existing_van_licence = Van_License.objects.filter(van=van, emirate_id=emirate_id).first()
+        existing_van_licence = Van_License.objects.filter(van=van, district_id=district_id).first()
         if existing_van_licence:
             existing_van_licence.expiry_date = expiry_date
             existing_van_licence.save()
         else:
-            Van_License.objects.create(van=van, emirate_id=emirate_id, expiry_date=expiry_date)
+            Van_License.objects.create(van=van, district_id=district_id, expiry_date=expiry_date)
         return redirect('licence_list')
-    return render(request, 'van_management/licence_edit.html', {'emirate_values' : emirate})
+    return render(request, 'van_management/licence_edit.html', {'district_values' : district})
 
 # Need to remove 
 def licence_delete(request, plate):

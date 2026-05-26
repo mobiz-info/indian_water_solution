@@ -136,7 +136,7 @@ def createcustomer(request):
                 data = form.save(commit=False)
                 data.created_by = str(request.user)
                 data.created_date = datetime.now()
-                data.emirate = data.location.emirate
+                data.district = data.location.district
                 branch_id=request.user.branch_id.branch_id
                 branch = BranchMaster.objects.get(branch_id=branch_id)  # Adjust the criteria based on your model
                 data.branch_id = branch
@@ -867,12 +867,12 @@ def new_registered_customers(request):
             Q(visit_schedule__icontains=query) |
             Q(status__icontains=query) |
             Q(location__location_name__icontains=query) |
-            Q(emirate__name__icontains=query)
+            Q(district__name__icontains=query)
         )
     
 
     # Fetch data for filters
-    emirates = EmirateMaster.objects.all()
+    districts = DistrictMaster.objects.all()
     locations = LocationMaster.objects.all()
     # log_activity(
     #         created_by=request.user,
@@ -881,7 +881,7 @@ def new_registered_customers(request):
 
     context = {
         'requests': requests,
-        'emirates': emirates,
+        'districts': districts,
         'locations': locations,
         'status_filter': status_filter,
         'location_filter': location_filter,

@@ -37,8 +37,8 @@
                                 <tr>
                                     <th scope="col" style="border-bottom: 0;">Sl No</th>
                                     <th scope="col" style="border-bottom: 0;">Plate No</th>
-                                    {% for emirate_name in emirate_names %}
-                                        <th  scope="col">{{ emirate_name }}</th> 
+                                    {% for district_name in district_names %}
+                                        <th  scope="col">{{ district_name }}</th> 
                                     {% endfor %}
                                     <th scope="col" style="border-bottom: 0;">Action</th>
                                 </tr>
@@ -48,8 +48,8 @@
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ plate }}</td>
-                                    {% for emirate_name in emirate_names %}
-                                        <td>{{ van_data|get_item:emirate_name|date:"d-m-y"|default:"- - - " }}</td>
+                                    {% for district_name in district_names %}
+                                        <td>{{ van_data|get_item:district_name|date:"d-m-y"|default:"- - - " }}</td>
                                         
                                     {% endfor %}
                                     <td>

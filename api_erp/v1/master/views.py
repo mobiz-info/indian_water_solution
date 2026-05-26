@@ -16,7 +16,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, renderer_classes
 
 from api_erp.v1.master.custom_pagination import CustomPagination
-from master.models import BranchMaster, DesignationMaster, EmirateMaster, LocationMaster, RouteMaster
+from master.models import BranchMaster, DesignationMaster, DistrictMaster, LocationMaster, RouteMaster
 from accounts.models import CustomUser, Customers
 from client_management.models import *
 from van_management.models import *
@@ -110,17 +110,17 @@ def sync_erp_branch(request):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 @renderer_classes((JSONRenderer,))
-def emirate(request):
-    emirate_id = request.GET.get('emirate_id')
+def district(request):
+    district_id = request.GET.get('district_id')
     many=True
     
-    instances = EmirateMaster.objects.all()
+    instances = DistrictMaster.objects.all()
     
-    if emirate_id:
-        instances = instances.filter(pk=emirate_id).first()
+    if district_id:
+        instances = instances.filter(pk=district_id).first()
         many=False
         
-    serializer = EmirateMasterSerializer(instances,many=many)
+    serializer = DistrictMasterSerializer(instances,many=many)
     
     status_code = status.HTTP_200_OK
     response_data = {
@@ -133,15 +133,15 @@ def emirate(request):
 
 
 @api_view(['POST'])
-def sync_erp_emirate(request):
+def sync_erp_district(request):
     if isinstance(request.data, list):  
-        serializer = EmirateSerializer(data=request.data, many=True)
+        serializer = DistrictSerializer(data=request.data, many=True)
         if serializer.is_valid():
             instances = serializer.save()
 
-            emirate_ids = [instance.emirate.emirate_id for instance in instances]
-            print("emirate_ids",emirate_ids)
-            EmirateMaster.objects.filter(emirate_id__in=emirate_ids).update(is_exported=True)
+            district_ids = [instance.district.district_id for instance in instances]
+            print("district_ids",district_ids)
+            DistrictMaster.objects.filter(district_id__in=district_ids).update(is_exported=True)
             
             return Response({"message": "Data stored successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

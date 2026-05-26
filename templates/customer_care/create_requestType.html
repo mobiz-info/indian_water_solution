@@ -353,9 +353,9 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group required">
-                                        <label class='control-label'>Emirate</label>
+                                        <label class='control-label'>District</label>
                                         
-                                        <input type="text" id="emirate" name="emirate" value ="{{ customer_data.emirate }}" class="form-control">
+                                        <input type="text" id="district" name="district" value ="{{ customer_data.district }}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -655,7 +655,7 @@
         {  
             customer_id_re=$('#customer_id_re').val();
             requesttypeval=$('#requesttypeselect').val();
-            emirate=$('#emirate').val();
+            district=$('#district').val();
             location=$('#location').val();
             buildingname=$('#buildingname').val();
             doorno=$('#doorno').val();
@@ -674,7 +674,7 @@
         data: JSON.stringify({
 
             "customer_id_res" : customer_id_res,
-            "emirate":emirate,
+            "district":district,
             "location":location,
             "buildingname":buildingname,
             "doorno":doorno,

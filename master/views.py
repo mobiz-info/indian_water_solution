@@ -1182,9 +1182,9 @@ class Location_Adding(View):
     form_class = Location_Add_Form
 
     def get(self, request, *args, **kwargs):
-        emirate_values = EmirateMaster.objects.all()
-        print(emirate_values)
-        context = {'emirate_values': emirate_values}
+        district_values = DistrictMaster.objects.all()
+        print(district_values)
+        context = {'district_values': district_values}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -1216,8 +1216,8 @@ class Location_Edit(View):
     def get(self, request, pk, *args, **kwargs):
         rec = LocationMaster.objects.get(location_id=pk)
         form = self.form_class(instance=rec)
-        emirate_values = EmirateMaster.objects.all()  # Queryset for populating emirate dropdown
-        context = {'form': form, 'emirate_values': emirate_values}
+        district_values = DistrictMaster.objects.all()  # Queryset for populating district dropdown
+        context = {'form': form, 'district_values': district_values}
         return render(request, self.template_name, context)
 
     def post(self, request, pk, *args, **kwargs):
@@ -1322,15 +1322,15 @@ class Category_Details(View):
         context = {'category_det': category_det}
         return render(request, self.template_name, context)
     
-# def create_emirates():
-#     EmirateMaster.objects.create(created_by = "default",name = "Abudhabi")
-#     EmirateMaster.objects.create(created_by = "default",name = "Dubai")
-#     EmirateMaster.objects.create(created_by = "default",name = "Sharjah")
-#     EmirateMaster.objects.create(created_by = "default",name = "Ajman")
-#     EmirateMaster.objects.create(created_by = "default",name = "Fujeriah")
-#     EmirateMaster.objects.create(created_by = "default",name = "RAK")
-#     EmirateMaster.objects.create(created_by = "default",name = "UAQ")
-# create_emirates()
+# def create_districts():
+#     DistrictMaster.objects.create(created_by = "default",name = "Abudhabi")
+#     DistrictMaster.objects.create(created_by = "default",name = "Dubai")
+#     DistrictMaster.objects.create(created_by = "default",name = "Sharjah")
+#     DistrictMaster.objects.create(created_by = "default",name = "Ajman")
+#     DistrictMaster.objects.create(created_by = "default",name = "Fujeriah")
+#     DistrictMaster.objects.create(created_by = "default",name = "RAK")
+#     DistrictMaster.objects.create(created_by = "default",name = "UAQ")
+# create_districts()
 def privacy(request):
     """
     Privacy instance.

@@ -80,8 +80,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-cred = credentials.Certificate(BASE_DIR / config('FIREBASE_CRED_KEY'))
-firebase_admin.initialize_app(cred,name="sanawater")
+# cred = credentials.Certificate(BASE_DIR / config('FIREBASE_CRED_KEY'))
+# firebase_admin.initialize_app(cred,name="sanawater")
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

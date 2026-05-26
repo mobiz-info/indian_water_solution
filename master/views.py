@@ -2261,3 +2261,73 @@ def update_app_permissions(request):
             messages.error(request, f"Error updating permission: {e}")
             
     return redirect('app_permission_list')
+
+class District_List(View):
+    template_name = 'master/district_list.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        district_li = DistrictMaster.objects.all().order_by("-created_date")
+        context = {'district_li': district_li}
+        return render(request, self.template_name, context)
+
+class District_Create(View):
+    template_name = 'master/district_create.html'
+    form_class = District_Form
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = {'form': self.form_class}
+        return render(request, self.template_name, context)
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.created_by = str(request.user.id)
+            data.save()
+            messages.success(request, 'District Successfully Added.', 'alert-success')
+            return redirect('district')
+        else:
+            messages.success(request, 'Data is not valid.', 'alert-danger')
+            context = {'form': form}
+            return render(request, self.template_name, context)
+
+class District_Edit(View):
+    template_name = 'master/district_edit.html'
+    form_class = District_Form
+
+    @method_decorator(login_required)
+    def get(self, request, pk, *args, **kwargs):
+        rec = get_object_or_404(DistrictMaster, district_id=pk)
+        form = self.form_class(instance=rec)
+        context = {'form': form, 'rec': rec}
+        return render(request, self.template_name, context)
+
+    @method_decorator(login_required)
+    def post(self, request, pk, *args, **kwargs):
+        rec = get_object_or_404(DistrictMaster, district_id=pk)
+        form = self.form_class(request.POST, instance=rec)
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.save()
+            messages.success(request, 'District Successfully Updated.', 'alert-success')
+            return redirect('district')
+        else:
+            messages.success(request, 'Data is not valid.', 'alert-danger')
+            context = {'form': form}
+            return render(request, self.template_name, context)
+
+class District_Delete(View):
+    @method_decorator(login_required)
+    def get(self, request, pk, *args, **kwargs):
+        rec = get_object_or_404(DistrictMaster, district_id=pk)
+        return render(request, 'master/district_delete.html', {'district': rec})
+
+    @method_decorator(login_required)
+    def post(self, request, pk, *args, **kwargs):
+        rec = get_object_or_404(DistrictMaster, district_id=pk)
+        rec.delete()
+        messages.success(request, 'District Deleted Successfully.', 'alert-success')
+        return redirect('district')

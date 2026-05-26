@@ -221,3 +221,11 @@ class PermissionManagementTabForm(forms.ModelForm):
             'tab_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Tab Name'}),
             'department': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class District_Form(forms.ModelForm):
+    class Meta:
+        model = DistrictMaster
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+        }

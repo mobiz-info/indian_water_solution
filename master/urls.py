@@ -77,7 +77,12 @@ urlpatterns = [
     path('subscription-alert/', subscription_alert, name='subscription_alert'),
     path('app-permissions/', app_permissions_list, name='app_permission_list'),
     path('app-permissions/update/', update_app_permissions, name='update_app_permissions'),
-   ]
+
+    path('district', District_List.as_view(), name='district'),
+    path('district_create', District_Create.as_view(), name='district_create'),
+    path('district_edit/<str:pk>', District_Edit.as_view(), name='district_edit'),
+    path('district_delete/<str:pk>', District_Delete.as_view(), name='district_delete'),
+]
 
 
 if settings.DEBUG:
